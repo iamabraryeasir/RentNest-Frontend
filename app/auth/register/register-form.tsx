@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { AlertCircle, Check, Key, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -120,14 +121,16 @@ export function RegisterForm() {
 
               <div className="grid grid-cols-2 gap-4 pt-1">
                 {/* Tenant Card */}
-                <button
+                <Button
                   type="button"
+                  variant="outline"
                   onClick={() => setSelectedRole("TENANT")}
-                  className={`relative flex items-center justify-between p-3.5 rounded-xl border text-left transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring select-none ${
+                  className={cn(
+                    "relative flex items-center justify-between p-3.5 rounded-xl h-auto text-left font-normal transition-all duration-200 cursor-pointer select-none border border-border w-full shadow-none",
                     selectedRole === "TENANT"
-                      ? "border-primary bg-primary/5 shadow-md"
-                      : "border-border hover:border-primary/50 hover:bg-muted/40"
-                  }`}
+                      ? "border-primary bg-primary/5 hover:bg-primary/5 hover:text-foreground"
+                      : "hover:border-primary/50 hover:bg-muted/40 hover:text-foreground"
+                  )}
                 >
                   <div className="flex items-center gap-3">
                     <div
@@ -146,17 +149,19 @@ export function RegisterForm() {
                   ) : (
                     <span className="flex h-5 w-5 items-center justify-center rounded-full border border-border bg-background" />
                   )}
-                </button>
+                </Button>
 
                 {/* Landlord Card */}
-                <button
+                <Button
                   type="button"
+                  variant="outline"
                   onClick={() => setSelectedRole("LANDLORD")}
-                  className={`relative flex items-center justify-between p-3.5 rounded-xl border text-left transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring select-none ${
+                  className={cn(
+                    "relative flex items-center justify-between p-3.5 rounded-xl h-auto text-left font-normal transition-all duration-200 cursor-pointer select-none border border-border w-full shadow-none",
                     selectedRole === "LANDLORD"
-                      ? "border-primary bg-primary/5 shadow-md"
-                      : "border-border hover:border-primary/50 hover:bg-muted/40"
-                  }`}
+                      ? "border-primary bg-primary/5 hover:bg-primary/5 hover:text-foreground"
+                      : "hover:border-primary/50 hover:bg-muted/40 hover:text-foreground"
+                  )}
                 >
                   <div className="flex items-center gap-3">
                     <div
@@ -175,7 +180,7 @@ export function RegisterForm() {
                   ) : (
                     <span className="flex h-5 w-5 items-center justify-center rounded-full border border-border bg-background" />
                   )}
-                </button>
+                </Button>
               </div>
 
               {state.errors?.role?.map((message) => (

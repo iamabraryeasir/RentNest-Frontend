@@ -8,6 +8,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
 import { logoutAction } from "@/app/auth/_actions/logout"
 import { User, LogOut, LayoutDashboard } from "lucide-react"
 
@@ -36,8 +37,10 @@ export function UserDropdown({ user }: UserDropdownProps) {
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <button 
-            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-border bg-muted text-muted-foreground outline-none transition-all hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring"
+          <Button
+            variant="outline"
+            size="icon"
+            className="rounded-full cursor-pointer bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             aria-label="User menu"
           />
         }

@@ -45,7 +45,7 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <RoleRedirectToast />
         </Suspense>
-        <Toaster />
+        <Toaster position="top-right" />
       </body>
     </html>
   );

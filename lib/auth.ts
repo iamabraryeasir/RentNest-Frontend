@@ -10,7 +10,7 @@ export type AuthenticatedUser = {
 };
 
 export function getApiBaseUrl() {
-  return process.env.API_BASE_URL;
+  return process.env.API_BASE_URL || "http://localhost:5000";
 }
 
 export function getAuthenticatedUserData(token: string | null | undefined) {

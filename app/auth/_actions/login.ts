@@ -81,6 +81,7 @@ export async function loginAction(
       path: "/",
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24, // 1 day
     });
 
     if (refreshToken) {
@@ -89,6 +90,7 @@ export async function loginAction(
         path: "/",
         sameSite: "lax",
         secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 * 24 * 7, // 7 days
       });
     }
 
@@ -97,6 +99,7 @@ export async function loginAction(
       path: "/",
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
     if (!role || !["tenant", "landlord", "admin"].includes(role)) {

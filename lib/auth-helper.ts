@@ -15,7 +15,7 @@ export function isTokenExpired(token: string): boolean {
       atob(base64)
         .split("")
         .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-        .join("")
+        .join(""),
     );
 
     const payload = JSON.parse(jsonPayload);
@@ -43,7 +43,7 @@ export function parseTokenRole(token: string): string | null {
       atob(base64)
         .split("")
         .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-        .join("")
+        .join(""),
     );
 
     const payload = JSON.parse(jsonPayload);
@@ -57,7 +57,7 @@ export function parseTokenRole(token: string): string | null {
  * Fetch a new access token from the backend using a refresh token.
  */
 export async function refreshTokenRequest(
-  refreshToken: string
+  refreshToken: string,
 ): Promise<{ accessToken: string; refreshToken?: string } | null> {
   const baseUrl = getApiBaseUrl() || "http://localhost:5000";
   try {
@@ -65,7 +65,7 @@ export async function refreshTokenRequest(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Cookie": `refreshToken=${refreshToken}`,
+        Cookie: `refreshToken=${refreshToken}`,
       },
       body: JSON.stringify({ refreshToken }),
     });
@@ -85,19 +85,54 @@ export async function refreshTokenRequest(
 }
 
 /**
- * Syncs the newly generated authentication tokens across response cookies and 
+ * Syncs the newly generated authentication tokens across response cookies and
  * request headers to keep Server Components and the browser in sync.
  */
 export function syncAuthCookies(
-  response: NextResponse,
   request: NextRequest,
   accessToken: string,
   refreshToken: string | undefined,
-  role: string
+  role: string,
 ): NextResponse {
   const secure = process.env.NODE_ENV === "production";
 
-  // 1. Set cookies on response
+  // 1. Parse and preserve other cookies in the request header
+  const cookieHeader = request.headers.get("cookie") || "";
+  const cookieMap = new Map<string, string>();
+  cookieHeader.split(";").forEach((c) => {
+    const parts = c.trim().split("=");
+    if (parts.length >= 2) {
+      const name = parts[0].trim();
+      const value = parts.slice(1).join("=").trim();
+      cookieMap.set(name, value);
+    }
+  });
+
+  // 2. Update the auth cookies
+  cookieMap.set("accessToken", accessToken);
+  if (refreshToken) {
+    cookieMap.set("refreshToken", refreshToken);
+  }
+  if (role) {
+    cookieMap.set("role", role);
+  }
+
+  // 3. Serialize back to cookie header format
+  const newCookieHeader = Array.from(cookieMap.entries())
+    .map(([name, value]) => `${name}=${value}`)
+    .join("; ");
+
+  // 4. Construct a new next response with updated request headers
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("cookie", newCookieHeader);
+
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+
+  // 5. Set cookies on response so the browser receives them
   response.cookies.set("accessToken", accessToken, {
     httpOnly: true,
     path: "/",
@@ -126,70 +161,5 @@ export function syncAuthCookies(
     });
   }
 
-  // 2. Parse and preserve other cookies in the request header
-  const cookieHeader = request.headers.get("cookie") || "";
-  const cookieMap = new Map<string, string>();
-  cookieHeader.split(";").forEach((c) => {
-    const parts = c.trim().split("=");
-    if (parts.length >= 2) {
-      const name = parts[0].trim();
-      const value = parts.slice(1).join("=").trim();
-      cookieMap.set(name, value);
-    }
-  });
-
-  // 3. Update the auth cookies
-  cookieMap.set("accessToken", accessToken);
-  if (refreshToken) {
-    cookieMap.set("refreshToken", refreshToken);
-  }
-  if (role) {
-    cookieMap.set("role", role);
-  }
-
-  // 4. Serialize back to cookie header format
-  const newCookieHeader = Array.from(cookieMap.entries())
-    .map(([name, value]) => `${name}=${value}`)
-    .join("; ");
-
-  // 5. Construct a new next response with updated request headers
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("cookie", newCookieHeader);
-
-  const responseWithHeaders = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
-
-  // 6. Copy updated cookies from original response
-  responseWithHeaders.cookies.set("accessToken", accessToken, {
-    httpOnly: true,
-    path: "/",
-    sameSite: "lax",
-    secure,
-    maxAge: 60 * 60 * 24, // 1 day
-  });
-
-  if (refreshToken) {
-    responseWithHeaders.cookies.set("refreshToken", refreshToken, {
-      httpOnly: true,
-      path: "/",
-      sameSite: "lax",
-      secure,
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
-  }
-
-  if (role) {
-    responseWithHeaders.cookies.set("role", role, {
-      httpOnly: true,
-      path: "/",
-      sameSite: "lax",
-      secure,
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
-  }
-
-  return responseWithHeaders;
+  return response;
 }

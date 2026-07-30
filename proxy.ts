@@ -3,7 +3,7 @@ import {
   parseTokenRole,
   refreshTokenRequest,
   syncAuthCookies,
-} from "@/lib/auth-helper";
+} from "./lib/auth-helper";
 import { NextRequest, NextResponse } from "next/server";
 
 const roleDashboards: Record<string, string> = {
@@ -112,10 +112,8 @@ export async function proxy(request: NextRequest) {
   }
 
   // 3. Construct response and sync updated cookies
-  let response = NextResponse.next();
   if (refreshed && newAccessToken) {
-    response = syncAuthCookies(
-      response,
+    return syncAuthCookies(
       request,
       newAccessToken,
       newRefreshToken,
@@ -123,9 +121,5 @@ export async function proxy(request: NextRequest) {
     );
   }
 
-  return response;
+  return NextResponse.next();
 }
-
-export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
-};

@@ -1,9 +1,9 @@
 import { RoleRedirectToast } from "@/components/role-redirect-toast";
-import { Toaster } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Raleway } from "next/font/google";
 import { Suspense } from "react";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 const raleway = Raleway({ subsets: ["latin"], variable: "--font-sans" });

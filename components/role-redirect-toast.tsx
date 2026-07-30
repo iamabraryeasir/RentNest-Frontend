@@ -2,7 +2,7 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { toast } from "@/components/ui/toast";
+import { toast } from "react-hot-toast";
 
 export function RoleRedirectToast() {
   const pathname = usePathname();
@@ -12,11 +12,12 @@ export function RoleRedirectToast() {
     const toastMessage = searchParams.get("toast");
 
     if (toastMessage) {
-      toast.add({
-        title: "Access notice",
-        description: toastMessage,
-        type: "warning",
-      });
+      toast(
+        `Access notice: ${toastMessage}`,
+        {
+          icon: "⚠️",
+        },
+      );
     }
   }, [pathname, searchParams]);
 

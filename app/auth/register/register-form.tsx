@@ -1,6 +1,10 @@
 "use client";
 
-import { registerAction, type RegisterState } from "@/app/auth/_actions/register";
+import {
+  registerAction,
+  type RegisterState,
+} from "@/app/auth/_actions/register";
+import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,12 +13,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Logo } from "@/components/logo";
+import { AlertCircle, Check, Key, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { User, Key, Check, AlertCircle } from "lucide-react";
 
 const initialState: RegisterState = {
   success: false,
@@ -30,10 +33,14 @@ export function RegisterForm() {
   const loadingToastId = useRef<string | undefined>(undefined);
 
   // Client-side states for interactive features
-  const [selectedRole, setSelectedRole] = useState<"TENANT" | "LANDLORD" | "">("");
+  const [selectedRole, setSelectedRole] = useState<"TENANT" | "LANDLORD" | "">(
+    "",
+  );
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [clientErrors, setClientErrors] = useState<{ confirmPassword?: string[] }>({});
+  const [clientErrors, setClientErrors] = useState<{
+    confirmPassword?: string[];
+  }>({});
 
   useEffect(() => {
     if (pending) {
@@ -98,15 +105,19 @@ export function RegisterForm() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={formAction} onSubmit={handleSubmit} className="space-y-5">
+          <form
+            action={formAction}
+            onSubmit={handleSubmit}
+            className="space-y-5"
+          >
             {/* Account Type (Role) Selector */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-foreground">
                 I want to register as a:
               </label>
-              
+
               <input type="hidden" name="role" value={selectedRole} />
-              
+
               <div className="grid grid-cols-2 gap-4 pt-1">
                 {/* Tenant Card */}
                 <button
@@ -119,10 +130,14 @@ export function RegisterForm() {
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${selectedRole === "TENANT" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                    <div
+                      className={`p-2 rounded-lg ${selectedRole === "TENANT" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+                    >
                       <User className="size-5" />
                     </div>
-                    <span className="font-semibold text-foreground text-sm">Tenant</span>
+                    <span className="font-semibold text-foreground text-sm">
+                      Tenant
+                    </span>
                   </div>
                   {selectedRole === "TENANT" ? (
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
@@ -144,10 +159,14 @@ export function RegisterForm() {
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${selectedRole === "LANDLORD" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                    <div
+                      className={`p-2 rounded-lg ${selectedRole === "LANDLORD" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+                    >
                       <Key className="size-5" />
                     </div>
-                    <span className="font-semibold text-foreground text-sm">Landlord</span>
+                    <span className="font-semibold text-foreground text-sm">
+                      Landlord
+                    </span>
                   </div>
                   {selectedRole === "LANDLORD" ? (
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
@@ -158,9 +177,12 @@ export function RegisterForm() {
                   )}
                 </button>
               </div>
-              
+
               {state.errors?.role?.map((message) => (
-                <p key={message} className="text-sm text-destructive flex items-center gap-1 mt-1 font-medium">
+                <p
+                  key={message}
+                  className="text-sm text-destructive flex items-center gap-1 mt-1 font-medium"
+                >
                   <AlertCircle className="size-4" /> {message}
                 </p>
               ))}
@@ -230,7 +252,10 @@ export function RegisterForm() {
               </div>
 
               <div className="space-y-1.5">
-                <label htmlFor="confirmPassword" className="text-sm font-medium">
+                <label
+                  htmlFor="confirmPassword"
+                  className="text-sm font-medium"
+                >
                   Confirm Password
                 </label>
                 <input
@@ -257,7 +282,11 @@ export function RegisterForm() {
               </p>
             ) : null}
 
-            <Button type="submit" className="w-full font-semibold transition-transform active:scale-[0.98]" disabled={pending || !!clientErrors.confirmPassword}>
+            <Button
+              type="submit"
+              className="w-full font-semibold transition-transform active:scale-[0.98]"
+              disabled={pending || !!clientErrors.confirmPassword}
+            >
               {pending ? "Creating account..." : "Register"}
             </Button>
           </form>

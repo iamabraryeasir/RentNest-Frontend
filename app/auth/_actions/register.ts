@@ -8,7 +8,7 @@ const registerSchema = z.object({
   email: z.string().trim().email("Please enter a valid email address."),
   password: z.string().min(6, "Password must be at least 6 characters."),
   role: z.enum(["TENANT", "LANDLORD"], {
-    errorMap: () => ({ message: "Please select a type of account." }),
+    message: "Please select a type of account.",
   }),
 });
 
@@ -61,7 +61,9 @@ export async function registerAction(
       return {
         success: false,
         message:
-          payload?.message || payload?.error || "Registration failed. Please try again.",
+          payload?.message ||
+          payload?.error ||
+          "Registration failed. Please try again.",
       };
     }
 

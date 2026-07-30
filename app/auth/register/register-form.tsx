@@ -33,6 +33,8 @@ export function RegisterForm() {
   const router = useRouter();
   const loadingToastId = useRef<string | undefined>(undefined);
 
+  const isRegistering = pending || state.success;
+
   // Client-side states for interactive features
   const [selectedRole, setSelectedRole] = useState<"TENANT" | "LANDLORD" | "">(
     "",
@@ -94,15 +96,15 @@ export function RegisterForm() {
   return (
     <div className="flex flex-col gap-6 w-full max-w-lg">
       <div className="flex justify-center">
-        <Link href="/">
+        <Link href="/" className={cn(isRegistering && "pointer-events-none")}>
           <Logo iconSize={40} className="text-2xl font-bold" />
         </Link>
       </div>
       <Card className="w-full border-border bg-card/65 backdrop-blur-md shadow-xl rounded-2xl">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Create account</CardTitle>
+          <CardTitle className="text-2xl font-bold">Sign up</CardTitle>
           <CardDescription>
-            Join RentNest today to find your dream home or manage listings.
+            Create an account to start renting or hosting.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -125,11 +127,12 @@ export function RegisterForm() {
                   type="button"
                   variant="outline"
                   onClick={() => setSelectedRole("TENANT")}
+                  disabled={isRegistering}
                   className={cn(
                     "relative flex items-center justify-between p-3.5 rounded-xl h-auto text-left font-normal transition-all duration-200 cursor-pointer select-none border border-border w-full shadow-none",
                     selectedRole === "TENANT"
                       ? "border-primary bg-primary/5 hover:bg-primary/5 hover:text-foreground"
-                      : "hover:border-primary/50 hover:bg-muted/40 hover:text-foreground"
+                      : "hover:border-primary/50 hover:bg-muted/40 hover:text-foreground",
                   )}
                 >
                   <div className="flex items-center gap-3">
@@ -156,11 +159,12 @@ export function RegisterForm() {
                   type="button"
                   variant="outline"
                   onClick={() => setSelectedRole("LANDLORD")}
+                  disabled={isRegistering}
                   className={cn(
                     "relative flex items-center justify-between p-3.5 rounded-xl h-auto text-left font-normal transition-all duration-200 cursor-pointer select-none border border-border w-full shadow-none",
                     selectedRole === "LANDLORD"
                       ? "border-primary bg-primary/5 hover:bg-primary/5 hover:text-foreground"
-                      : "hover:border-primary/50 hover:bg-muted/40 hover:text-foreground"
+                      : "hover:border-primary/50 hover:bg-muted/40 hover:text-foreground",
                   )}
                 >
                   <div className="flex items-center gap-3">
@@ -203,8 +207,9 @@ export function RegisterForm() {
                 name="name"
                 type="text"
                 required
+                disabled={isRegistering}
                 placeholder="John Doe"
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground/60"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground/60 disabled:opacity-50 disabled:cursor-not-allowed"
               />
               {state.errors?.name?.map((message) => (
                 <p key={message} className="text-sm text-destructive mt-0.5">
@@ -223,8 +228,9 @@ export function RegisterForm() {
                 name="email"
                 type="email"
                 required
+                disabled={isRegistering}
                 placeholder="john@example.com"
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground/60"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground/60 disabled:opacity-50 disabled:cursor-not-allowed"
               />
               {state.errors?.email?.map((message) => (
                 <p key={message} className="text-sm text-destructive mt-0.5">
@@ -244,10 +250,11 @@ export function RegisterForm() {
                   name="password"
                   type="password"
                   required
+                  disabled={isRegistering}
                   placeholder="Min. 6 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground/60"
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground/60 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 {state.errors?.password?.map((message) => (
                   <p key={message} className="text-sm text-destructive mt-0.5">
@@ -268,10 +275,11 @@ export function RegisterForm() {
                   name="confirmPassword"
                   type="password"
                   required
+                  disabled={isRegistering}
                   placeholder="Repeat password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground/60"
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground/60 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 {clientErrors.confirmPassword?.map((message) => (
                   <p key={message} className="text-sm text-destructive mt-0.5">
@@ -289,23 +297,33 @@ export function RegisterForm() {
 
             <Button
               type="submit"
-              className="w-full font-semibold transition-transform active:scale-[0.98]"
-              disabled={pending || !!clientErrors.confirmPassword}
+              className="w-full font-semibold transition-transform active:scale-[0.98] cursor-pointer"
+              disabled={isRegistering || !!clientErrors.confirmPassword}
             >
-              {pending ? "Creating account..." : "Register"}
+              {isRegistering
+                ? state.success
+                  ? "Redirecting..."
+                  : "Creating account..."
+                : "Register"}
             </Button>
           </form>
 
           <div className="mt-5 flex items-center justify-between text-sm border-t border-border/60 pt-4">
             <Link
               href="/auth/login"
-              className="text-primary hover:underline underline-offset-4 font-medium"
+              className={cn(
+                "text-primary hover:underline underline-offset-4 font-medium",
+                isRegistering && "pointer-events-none opacity-50",
+              )}
             >
               Already have an account? Sign in
             </Link>
             <Link
               href="/"
-              className="text-muted-foreground hover:text-foreground hover:underline underline-offset-4 font-medium"
+              className={cn(
+                "text-muted-foreground hover:text-foreground hover:underline underline-offset-4 font-medium",
+                isRegistering && "pointer-events-none opacity-50",
+              )}
             >
               Go home
             </Link>

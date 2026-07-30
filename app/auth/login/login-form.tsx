@@ -16,6 +16,8 @@ import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 
+import { cn } from "@/lib/utils";
+
 const initialState: LoginState = {
   success: false,
   message: "",
@@ -29,6 +31,8 @@ export function LoginForm() {
   );
   const router = useRouter();
   const loadingToastId = useRef<string | undefined>(undefined);
+
+  const isLoggingIn = pending || (state.success && !!state.redirectTo);
 
   useEffect(() => {
     if (pending) {
@@ -57,7 +61,7 @@ export function LoginForm() {
   return (
     <div className="flex flex-col gap-6 w-full max-w-md">
       <div className="flex justify-center">
-        <Link href="/">
+        <Link href="/" className={cn(isLoggingIn && "pointer-events-none")}>
           <Logo iconSize={40} className="text-2xl font-bold" />
         </Link>
       </div>
@@ -78,8 +82,9 @@ export function LoginForm() {
                 id="email"
                 name="email"
                 type="email"
+                disabled={isLoggingIn}
                 placeholder="tenant@example.com"
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
               />
               {state.errors?.email?.map((message) => (
                 <p key={message} className="text-sm text-destructive">
@@ -96,8 +101,9 @@ export function LoginForm() {
                 id="password"
                 name="password"
                 type="password"
+                disabled={isLoggingIn}
                 placeholder="Enter password"
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
               />
               {state.errors?.password?.map((message) => (
                 <p key={message} className="text-sm text-destructive">
@@ -112,21 +118,31 @@ export function LoginForm() {
               </p>
             ) : null}
 
-            <Button type="submit" className="w-full" disabled={pending}>
-              {pending ? "Signing in..." : "Sign in"}
+            <Button
+              type="submit"
+              className="w-full cursor-pointer"
+              disabled={isLoggingIn}
+            >
+              {isLoggingIn ? "Signing in..." : "Sign in"}
             </Button>
           </form>
 
           <div className="mt-4 flex items-center justify-between text-sm">
             <Link
               href="/auth/register"
-              className="text-primary underline-offset-4 hover:underline"
+              className={cn(
+                "text-primary underline-offset-4 hover:underline",
+                isLoggingIn && "pointer-events-none opacity-50",
+              )}
             >
               Create an account
             </Link>
             <Link
               href="/"
-              className="text-primary underline-offset-4 hover:underline"
+              className={cn(
+                "text-primary underline-offset-4 hover:underline",
+                isLoggingIn && "pointer-events-none opacity-50",
+              )}
             >
               Go home
             </Link>

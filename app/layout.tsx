@@ -1,6 +1,9 @@
+import { RoleRedirectToast } from "@/components/role-redirect-toast";
+import { Toaster } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Raleway } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 
 const raleway = Raleway({ subsets: ["latin"], variable: "--font-sans" });
@@ -37,7 +40,13 @@ export default function RootLayout({
         raleway.variable,
       )}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Suspense fallback={null}>
+          <RoleRedirectToast />
+        </Suspense>
+        <Toaster />
+      </body>
     </html>
   );
 }

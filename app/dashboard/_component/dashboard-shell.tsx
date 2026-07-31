@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { ChevronRight, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import * as React from "react";
+import { useState } from "react";
 import { roleSidebarItems } from "../_config/role-sidebar-items";
 
 interface DashboardShellProps {
@@ -21,7 +21,7 @@ interface DashboardShellProps {
 }
 
 export function DashboardShell({ children, user, role }: DashboardShellProps) {
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const pathname = usePathname();
 
   const sidebarItems = roleSidebarItems[role] || [];

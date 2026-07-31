@@ -3,7 +3,7 @@
 import { createCheckoutSessionAction } from "@/app/dashboard/tenant/_actions/payments";
 import { Button } from "@/components/ui/button";
 import { CreditCard, Loader2 } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 interface PayButtonProps {
@@ -11,7 +11,7 @@ interface PayButtonProps {
 }
 
 export function PayButton({ rentalId }: PayButtonProps) {
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handlePayment = async () => {
     setLoading(true);

@@ -1,5 +1,6 @@
 import { apiFetch } from "@/lib/api-client";
-import { CreatePropertyForm } from "../../_component/create-property-form";
+import { PropertyForm } from "../../_component/property-form";
+import { createPropertyAction } from "../../_actions/landlord";
 
 export default async function NewPropertyPage() {
   // Fetch categories from the backend (cached for 1 hour)
@@ -29,7 +30,11 @@ export default async function NewPropertyPage() {
       </section>
 
       <section className="rounded-2xl border bg-card shadow-xs">
-        <CreatePropertyForm categories={categories} />
+        <PropertyForm
+          mode="create"
+          action={createPropertyAction}
+          categories={categories}
+        />
       </section>
     </main>
   );

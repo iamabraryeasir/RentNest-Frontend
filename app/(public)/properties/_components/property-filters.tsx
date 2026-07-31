@@ -1,10 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { MapPin, RotateCcw, Search, SlidersHorizontal } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import * as React from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
 
 interface Category {
   id: string;
@@ -22,28 +24,21 @@ export function PropertyFilters({
   initialFilters,
 }: PropertyFiltersProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [isPending, startTransition] = React.useTransition();
+  const [isPending, startTransition] = useTransition();
 
   // Local form states
-  const [search, setSearch] = React.useState(initialFilters.search || "");
-  const [city, setCity] = React.useState(initialFilters.city || "");
-  const [categoryId, setCategoryId] = React.useState(
-    initialFilters.categoryId || "",
-  );
-  const [minPrice, setMinPrice] = React.useState(initialFilters.minPrice || "");
-  const [maxPrice, setMaxPrice] = React.useState(initialFilters.maxPrice || "");
-  const [bedrooms, setBedrooms] = React.useState(initialFilters.bedrooms || "");
-  const [bathrooms, setBathrooms] = React.useState(
-    initialFilters.bathrooms || "",
-  );
-  const [sortBy, setSortBy] = React.useState(initialFilters.sortBy || "");
-  const [sortOrder, setSortOrder] = React.useState(
-    initialFilters.sortOrder || "",
-  );
+  const [search, setSearch] = useState(initialFilters.search || "");
+  const [city, setCity] = useState(initialFilters.city || "");
+  const [categoryId, setCategoryId] = useState(initialFilters.categoryId || "");
+  const [minPrice, setMinPrice] = useState(initialFilters.minPrice || "");
+  const [maxPrice, setMaxPrice] = useState(initialFilters.maxPrice || "");
+  const [bedrooms, setBedrooms] = useState(initialFilters.bedrooms || "");
+  const [bathrooms, setBathrooms] = useState(initialFilters.bathrooms || "");
+  const [sortBy, setSortBy] = useState(initialFilters.sortBy || "");
+  const [sortOrder, setSortOrder] = useState(initialFilters.sortOrder || "");
 
   // Update states if query params change externally (e.g. back button)
-  React.useEffect(() => {
+  useEffect(() => {
     setSearch(initialFilters.search || "");
     setCity(initialFilters.city || "");
     setCategoryId(initialFilters.categoryId || "");
@@ -125,14 +120,14 @@ export function PropertyFilters({
           Search Properties
         </label>
         <div className="relative">
-          <Search className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
-          <input
+          <Search className="absolute top-2.5 left-3 size-4 text-muted-foreground pointer-events-none" />
+          <Input
             type="text"
             placeholder="e.g. Modern Apartment"
             value={search}
             disabled={isPending}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 border border-border rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground disabled:opacity-60 disabled:cursor-not-allowed"
+            className="pl-9"
           />
         </div>
       </div>
@@ -143,14 +138,14 @@ export function PropertyFilters({
           City
         </label>
         <div className="relative">
-          <MapPin className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
-          <input
+          <MapPin className="absolute top-2.5 left-3 size-4 text-muted-foreground pointer-events-none" />
+          <Input
             type="text"
             placeholder="e.g. Dhaka"
             value={city}
             disabled={isPending}
             onChange={(e) => setCity(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 border border-border rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground disabled:opacity-60 disabled:cursor-not-allowed"
+            className="pl-9"
           />
         </div>
       </div>
@@ -160,11 +155,10 @@ export function PropertyFilters({
         <label className="text-xs font-bold text-foreground uppercase tracking-wider">
           Category
         </label>
-        <select
+        <Select
           value={categoryId}
           disabled={isPending}
           onChange={(e) => setCategoryId(e.target.value)}
-          className="w-full px-3 py-2.5 border border-border rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <option value="">All Categories</option>
           {categories.map((cat) => (
@@ -172,7 +166,7 @@ export function PropertyFilters({
               {cat.name}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       {/* Price Range */}
@@ -181,21 +175,19 @@ export function PropertyFilters({
           Rent Amount (BDT)
         </label>
         <div className="grid grid-cols-2 gap-2">
-          <input
+          <Input
             type="number"
             placeholder="Min Price"
             value={minPrice}
             disabled={isPending}
             onChange={(e) => setMinPrice(e.target.value)}
-            className="w-full px-3 py-2.5 border border-border rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground disabled:opacity-60 disabled:cursor-not-allowed"
           />
-          <input
+          <Input
             type="number"
             placeholder="Max Price"
             value={maxPrice}
             disabled={isPending}
             onChange={(e) => setMaxPrice(e.target.value)}
-            className="w-full px-3 py-2.5 border border-border rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground disabled:opacity-60 disabled:cursor-not-allowed"
           />
         </div>
       </div>
@@ -269,7 +261,7 @@ export function PropertyFilters({
         <label className="text-xs font-bold text-foreground uppercase tracking-wider">
           Sort By
         </label>
-        <select
+        <Select
           value={sortBy ? `${sortBy}:${sortOrder}` : ""}
           disabled={isPending}
           onChange={(e) => {
@@ -283,14 +275,13 @@ export function PropertyFilters({
               setSortOrder(order);
             }
           }}
-          className="w-full px-3 py-2.5 border border-border rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <option value="">Default Sorting</option>
           <option value="rentAmount:asc">Price: Low to High</option>
           <option value="rentAmount:desc">Price: High to Low</option>
           <option value="createdAt:desc">Newest Listings</option>
           <option value="propertySize:desc">Largest Size</option>
-        </select>
+        </Select>
       </div>
 
       <Button

@@ -1,10 +1,18 @@
 "use client";
 
 import { updateRentalStatusAction } from "@/app/dashboard/landlord/_actions/landlord";
+import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Calendar, Check, GitPullRequest, Loader2, MessageSquare, User, X } from "lucide-react";
-import * as React from "react";
+import {
+  Calendar,
+  Check,
+  GitPullRequest,
+  Loader2,
+  MessageSquare,
+  User,
+  X,
+} from "lucide-react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 export interface RentalRequest {
@@ -33,8 +41,10 @@ interface RequestsTableProps {
 }
 
 export function RequestsTable({ requests }: RequestsTableProps) {
-  const [loadingId, setLoadingId] = React.useState<string | null>(null);
-  const [actionType, setActionType] = React.useState<"APPROVE" | "REJECT" | null>(null);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [actionType, setActionType] = useState<"APPROVE" | "REJECT" | null>(
+    null,
+  );
 
   const handleAction = async (id: string, status: "APPROVED" | "REJECTED") => {
     setLoadingId(id);
@@ -88,9 +98,13 @@ export function RequestsTable({ requests }: RequestsTableProps) {
           {requests.map((req) => {
             const isPending = req.status === "PENDING";
             const isLoading = loadingId === req.id;
-            const formattedRent = Number(req.rentAmount || req.property?.rentAmount || 0).toLocaleString();
+            const formattedRent = Number(
+              req.rentAmount || req.property?.rentAmount || 0,
+            ).toLocaleString();
 
-            const moveInDateFormatted = new Date(req.requestedMoveIn).toLocaleDateString(undefined, {
+            const moveInDateFormatted = new Date(
+              req.requestedMoveIn,
+            ).toLocaleDateString(undefined, {
               year: "numeric",
               month: "short",
               day: "numeric",
@@ -105,12 +119,19 @@ export function RequestsTable({ requests }: RequestsTableProps) {
                   <div className="flex items-start gap-2">
                     <User className="size-4 text-muted-foreground shrink-0 mt-0.5" />
                     <div className="space-y-1">
-                      <p className="font-medium text-foreground leading-none">{req.tenant?.name || "Tenant"}</p>
-                      <p className="text-xs text-muted-foreground">{req.tenant?.email}</p>
+                      <p className="font-medium text-foreground leading-none">
+                        {req.tenant?.name || "Tenant"}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {req.tenant?.email}
+                      </p>
                       {req.message && (
                         <div className="flex items-center gap-1 text-[11px] text-muted-foreground/80 bg-muted/50 px-2 py-0.5 rounded border border-border/40 w-fit">
                           <MessageSquare className="size-3 shrink-0" />
-                          <span className="truncate max-w-[200px]" title={req.message}>
+                          <span
+                            className="truncate max-w-[200px]"
+                            title={req.message}
+                          >
                             "{req.message}"
                           </span>
                         </div>
@@ -130,22 +151,7 @@ export function RequestsTable({ requests }: RequestsTableProps) {
                   ৳{formattedRent}
                 </td>
                 <td className="px-6 py-4">
-                  <span
-                    className={cn(
-                      "inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
-                      req.status === "PENDING"
-                        ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
-                        : req.status === "APPROVED"
-                        ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
-                        : req.status === "REJECTED"
-                        ? "bg-rose-500/10 text-rose-500 border-rose-500/20"
-                        : req.status === "ACTIVE"
-                        ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-                        : "bg-muted text-muted-foreground border-border/60"
-                    )}
-                  >
-                    {req.status}
-                  </span>
+                  <StatusBadge status={req.status || "PENDING"} />
                 </td>
                 <td className="px-6 py-4 text-right">
                   {isPending ? (

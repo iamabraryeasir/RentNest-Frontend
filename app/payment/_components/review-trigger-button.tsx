@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
-import * as React from "react";
+import { useState } from "react";
 import { ReviewModal } from "./review-modal";
 
 interface ReviewTriggerProps {
@@ -15,7 +15,7 @@ export function ReviewTriggerButton({
   propertyId,
   propertyTitle,
 }: ReviewTriggerProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
@@ -42,7 +42,7 @@ export function SuccessReviewButton({
   propertyId,
   propertyTitle,
 }: ReviewTriggerProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>

@@ -7,7 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Loader2, MessageSquare, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
-import * as React from "react";
+import { useActionState, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface ReviewFormProps {
@@ -26,16 +26,16 @@ export function ReviewForm({
   propertyTitle,
   onSuccess,
 }: ReviewFormProps) {
-  const [rating, setRating] = React.useState<number>(5);
-  const [hoverRating, setHoverRating] = React.useState<number | null>(null);
-  const [comment, setComment] = React.useState("");
-  const [state, formAction, pending] = React.useActionState(
+  const [rating, setRating] = useState<number>(5);
+  const [hoverRating, setHoverRating] = useState<number | null>(null);
+  const [comment, setComment] = useState("");
+  const [state, formAction, pending] = useActionState(
     submitReviewAction,
     initialState,
   );
   const router = useRouter();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (state.success) {
       toast.success(state.message);
       setComment("");

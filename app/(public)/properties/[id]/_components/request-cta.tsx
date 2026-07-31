@@ -1,13 +1,16 @@
 "use client";
 
-import { submitRentalRequestAction, type RentalRequestState } from "@/app/(public)/_actions/rentals";
+import {
+  submitRentalRequestAction,
+  type RentalRequestState,
+} from "@/app/(public)/_actions/rentals";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Calendar, HelpCircle, Loader2, Lock, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import * as React from "react";
+import { useActionState, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface RequestCTAProps {
@@ -30,10 +33,10 @@ export function RequestCTA({
   isAuthenticated,
   userRole,
 }: RequestCTAProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [state, formAction, pending] = React.useActionState(
+  const [isOpen, setIsOpen] = useState(false);
+  const [state, formAction, pending] = useActionState(
     submitRentalRequestAction,
-    initialState
+    initialState,
   );
   const router = useRouter();
 
@@ -41,7 +44,7 @@ export function RequestCTA({
   const isAvailable = propertyStatus === "AVAILABLE";
   const isTenant = userRole === "tenant";
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (state.success) {
       toast.success(state.message);
       setIsOpen(false);
@@ -69,7 +72,9 @@ export function RequestCTA({
             </span>
             <div className="flex items-baseline gap-0.5 text-foreground">
               <span className="text-2xl font-black">৳{formattedRent}</span>
-              <span className="text-xs text-muted-foreground font-medium">/ month</span>
+              <span className="text-xs text-muted-foreground font-medium">
+                / month
+              </span>
             </div>
           </div>
           <span
@@ -78,8 +83,8 @@ export function RequestCTA({
               isAvailable
                 ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
                 : propertyStatus === "RENTED"
-                ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
-                : "bg-muted text-muted-foreground border-border/60"
+                  ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                  : "bg-muted text-muted-foreground border-border/60",
             )}
           >
             {propertyStatus}
@@ -92,18 +97,24 @@ export function RequestCTA({
             <div className="space-y-3">
               <Button
                 render={
-                  <Link href={`/auth/login?redirect=/properties/${propertyId}`} />
+                  <Link
+                    href={`/auth/login?redirect=/properties/${propertyId}`}
+                  />
                 }
                 className="w-full font-bold cursor-pointer rounded-xl py-6 text-sm"
               >
                 Sign In to Request
               </Button>
               <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1.5">
-                <Lock className="size-3.5" /> Requires tenant account registration.
+                <Lock className="size-3.5" /> Requires tenant account
+                registration.
               </p>
             </div>
           ) : !isAvailable ? (
-            <Button className="w-full font-semibold rounded-xl py-6 text-sm" disabled>
+            <Button
+              className="w-full font-semibold rounded-xl py-6 text-sm"
+              disabled
+            >
               Unavailable for Rent
             </Button>
           ) : isTenant ? (
@@ -115,11 +126,15 @@ export function RequestCTA({
             </Button>
           ) : (
             <div className="space-y-2">
-              <Button className="w-full font-semibold rounded-xl py-6 text-sm" disabled>
+              <Button
+                className="w-full font-semibold rounded-xl py-6 text-sm"
+                disabled
+              >
                 Request to Rent
               </Button>
               <p className="text-xs text-destructive text-center flex items-center justify-center gap-1.5 font-medium bg-destructive/5 py-2 px-3 rounded-xl border border-destructive/10">
-                <HelpCircle className="size-4" /> Only tenant accounts can request.
+                <HelpCircle className="size-4" /> Only tenant accounts can
+                request.
               </p>
             </div>
           )}
@@ -216,7 +231,9 @@ export function RequestCTA({
                   Rental Agreement Estimate
                 </span>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  The initial monthly rent is set at <strong className="text-foreground">৳{formattedRent}</strong>. Final lease duration is subject to landlord verification.
+                  The initial monthly rent is set at{" "}
+                  <strong className="text-foreground">৳{formattedRent}</strong>.
+                  Final lease duration is subject to landlord verification.
                 </p>
               </div>
 

@@ -1,3 +1,4 @@
+import { StatCard } from "@/components/stat-card";
 import { StatusBadge } from "@/components/status-badge";
 import { apiFetch } from "@/lib/api-client";
 import {
@@ -14,7 +15,6 @@ import {
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { StatCard } from "./_component/stat-card";
 
 export default async function AdminDashboardPage() {
   const cookieStore = await cookies();

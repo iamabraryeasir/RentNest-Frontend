@@ -1,4 +1,4 @@
-import { ReviewTriggerButton } from "@/app/payment/_components/review-trigger-button";
+import { StatCard } from "@/components/stat-card";
 import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-client";
 import {
@@ -11,6 +11,7 @@ import {
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { TenantRequestsTable } from "./_component/tenant-requests-table";
 
 export default async function TenantDashboardPage() {
   const cookieStore = await cookies();
@@ -64,50 +65,32 @@ export default async function TenantDashboardPage() {
 
       {/* Metrics Section */}
       <section className="grid gap-4 md:grid-cols-3">
-        {/* Active Rentals */}
-        <div className="rounded-2xl border bg-card p-5 shadow-xs flex items-center justify-between">
-          <div className="space-y-1.5">
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Active Rentals
-            </p>
-            <p className="text-2xl font-black text-foreground">
-              {activeRentals.length}
-            </p>
-          </div>
-          <div className="rounded-xl bg-emerald-500/5 p-3">
-            <Building className="size-6 text-emerald-500" />
-          </div>
-        </div>
+        <StatCard
+          title="Active Rentals"
+          value={activeRentals.length}
+          icon={Building}
+          iconColorClass="text-emerald-500"
+          iconBgClass="bg-emerald-500/5"
+          glowColorClass="bg-emerald-500/5"
+        />
 
-        {/* Pending Payments */}
-        <div className="rounded-2xl border bg-card p-5 shadow-xs flex items-center justify-between">
-          <div className="space-y-1.5">
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Pending Payments
-            </p>
-            <p className="text-2xl font-black text-foreground">
-              {pendingPayments.length}
-            </p>
-          </div>
-          <div className="rounded-xl bg-amber-500/5 p-3">
-            <CreditCard className="size-6 text-amber-500" />
-          </div>
-        </div>
+        <StatCard
+          title="Pending Payments"
+          value={pendingPayments.length}
+          icon={CreditCard}
+          iconColorClass="text-amber-500"
+          iconBgClass="bg-amber-500/5"
+          glowColorClass="bg-amber-500/5"
+        />
 
-        {/* Pending Approvals */}
-        <div className="rounded-2xl border bg-card p-5 shadow-xs flex items-center justify-between">
-          <div className="space-y-1.5">
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Pending Approvals
-            </p>
-            <p className="text-2xl font-black text-foreground">
-              {pendingApprovals.length}
-            </p>
-          </div>
-          <div className="rounded-xl bg-primary/5 p-3">
-            <GitPullRequest className="size-6 text-primary" />
-          </div>
-        </div>
+        <StatCard
+          title="Pending Approvals"
+          value={pendingApprovals.length}
+          icon={GitPullRequest}
+          iconColorClass="text-primary"
+          iconBgClass="bg-primary/5"
+          glowColorClass="bg-primary/5"
+        />
       </section>
 
       {/* Recent requests list section */}
@@ -145,89 +128,7 @@ export default async function TenantDashboardPage() {
             </Button>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-xs">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-border bg-muted/20 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    <th className="px-6 py-4">Property</th>
-                    <th className="px-6 py-4">Move-In Date</th>
-                    <th className="px-6 py-4">Message</th>
-                    <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/60 text-sm">
-                  {requests.slice(0, 5).map((req: any) => {
-                    const status = req.status;
-                    const dateFormatted = new Date(
-                      req.requestedMoveIn,
-                    ).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    });
-
-                    return (
-                      <tr
-                        key={req.id}
-                        className="hover:bg-muted/10 transition-colors"
-                      >
-                        <td className="px-6 py-4">
-                          <div className="font-semibold text-foreground">
-                            {req.property?.title || "Property listing"}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {req.property?.city || "Unknown Location"}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-muted-foreground">
-                          {dateFormatted}
-                        </td>
-                        <td className="px-6 py-4 text-muted-foreground max-w-[200px] truncate">
-                          {req.message}
-                        </td>
-                        <td className="px-6 py-4">
-                          <span
-                            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider border ${
-                              status === "ACTIVE"
-                                ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/25"
-                                : status === "APPROVED"
-                                  ? "bg-blue-500/10 text-blue-600 border-blue-500/25"
-                                  : status === "PENDING"
-                                    ? "bg-amber-500/10 text-amber-600 border-amber-500/25"
-                                    : "bg-red-500/10 text-red-600 border-red-500/25"
-                            }`}
-                          >
-                            {status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          {status === "APPROVED" ? (
-                            <Link
-                              href={`/dashboard/tenant/requests/${req.id}/pay`}
-                              className="inline-flex items-center justify-center rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-bold text-white hover:bg-amber-600 transition-colors"
-                            >
-                              Pay Now
-                            </Link>
-                          ) : status === "ACTIVE" ? (
-                            <ReviewTriggerButton
-                              propertyId={req.propertyId}
-                              propertyTitle={req.property?.title || "Property"}
-                            />
-                          ) : (
-                            <span className="text-xs text-muted-foreground font-medium">
-                              —
-                            </span>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <TenantRequestsTable requests={requests} />
         )}
       </section>
     </main>

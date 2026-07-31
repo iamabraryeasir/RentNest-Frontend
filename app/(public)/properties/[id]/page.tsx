@@ -1,20 +1,19 @@
 import { Property } from "@/components/property-card";
 import { apiFetch } from "@/lib/api-client";
 import { getAuthenticatedUserData } from "@/lib/auth";
-import { 
-  ArrowLeft, 
-  Bath, 
-  Bed, 
-  Building, 
-  Check, 
-  MapPin, 
-  Maximize2, 
-  Tag 
+import {
+  ArrowLeft,
+  Bath,
+  Bed,
+  Building,
+  Check,
+  MapPin,
+  Maximize2,
+  Tag,
 } from "lucide-react";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import * as React from "react";
 import { RequestCTA } from "./_components/request-cta";
 
 type Props = {
@@ -97,7 +96,10 @@ export default async function PropertyDetailsPage({ params }: Props) {
             </h1>
             <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
               <MapPin className="size-4 text-muted-foreground/80 shrink-0" />
-              <span>{property.address ? `${property.address}, ` : ""}{locationText}</span>
+              <span>
+                {property.address ? `${property.address}, ` : ""}
+                {locationText}
+              </span>
             </div>
           </div>
 
@@ -105,15 +107,21 @@ export default async function PropertyDetailsPage({ params }: Props) {
           <div className="grid grid-cols-3 gap-4 border-y border-border/60 py-3 text-foreground">
             <div className="flex items-center gap-2">
               <Bed className="size-5 text-muted-foreground shrink-0" />
-              <span className="text-sm font-bold text-foreground">{property.bedrooms} Beds</span>
+              <span className="text-sm font-bold text-foreground">
+                {property.bedrooms} Beds
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <Bath className="size-5 text-muted-foreground shrink-0" />
-              <span className="text-sm font-bold text-foreground">{property.bathrooms} Baths</span>
+              <span className="text-sm font-bold text-foreground">
+                {property.bathrooms} Baths
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <Maximize2 className="size-4.5 text-muted-foreground shrink-0" />
-              <span className="text-sm font-bold text-foreground">{property.propertySize} sqft</span>
+              <span className="text-sm font-bold text-foreground">
+                {property.propertySize} sqft
+              </span>
             </div>
           </div>
 

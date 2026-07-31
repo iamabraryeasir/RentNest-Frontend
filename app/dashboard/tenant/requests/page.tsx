@@ -1,4 +1,5 @@
 import { ReviewTriggerButton } from "@/app/payment/_components/review-trigger-button";
+import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-client";
 import {
@@ -142,22 +143,7 @@ export default async function TenantRequestsPage() {
                           </p>
                         </td>
                         <td className="px-6 py-4">
-                          <span
-                            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider border ${
-                              status === "ACTIVE"
-                                ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/25"
-                                : status === "APPROVED"
-                                  ? "bg-blue-500/10 text-blue-600 border-blue-500/25"
-                                  : status === "PENDING"
-                                    ? "bg-amber-500/10 text-amber-600 border-amber-500/25"
-                                    : "bg-red-500/10 text-red-600 border-red-500/25"
-                            }`}
-                          >
-                            {status === "APPROVED" && (
-                              <Clock className="size-3" />
-                            )}
-                            {status}
-                          </span>
+                          <StatusBadge status={status} />
                         </td>
                         <td className="px-6 py-4 text-right">
                           {status === "APPROVED" ? (

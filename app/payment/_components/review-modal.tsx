@@ -1,7 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
-import * as React from "react";
+import { useEffect } from "react";
 import { ReviewForm } from "./review-form";
 
 interface ReviewModalProps {
@@ -17,7 +17,7 @@ export function ReviewModal({
   propertyId,
   propertyTitle,
 }: ReviewModalProps) {
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {

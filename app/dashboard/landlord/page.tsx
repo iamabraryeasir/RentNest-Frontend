@@ -1,4 +1,5 @@
 import { Property } from "@/components/property-card";
+import { StatCard } from "@/components/stat-card";
 import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-client";
 import {
@@ -78,50 +79,31 @@ export default async function LandlordDashboardPage() {
 
       {/* Metrics Section */}
       <section className="grid gap-4 md:grid-cols-3">
-        {/* Total Properties */}
-        <div className="rounded-2xl border bg-card p-5 shadow-xs flex items-center justify-between">
-          <div className="space-y-1.5">
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Total Properties
-            </p>
-            <p className="text-2xl font-black text-foreground">
-              {properties.length}
-            </p>
-          </div>
-          <div className="rounded-xl bg-primary/5 p-3">
-            <Building className="size-6 text-primary" />
-          </div>
-        </div>
+        <StatCard
+          title="Total Properties"
+          value={properties.length}
+          icon={Building}
+          iconColorClass="text-primary"
+          iconBgClass="bg-primary/5"
+        />
 
-        {/* Incoming Requests */}
-        <div className="rounded-2xl border bg-card p-5 shadow-xs flex items-center justify-between">
-          <div className="space-y-1.5">
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Pending Requests
-            </p>
-            <p className="text-2xl font-black text-foreground">
-              {pendingRequestsCount}
-            </p>
-          </div>
-          <div className="rounded-xl bg-amber-500/5 p-3">
-            <GitPullRequest className="size-6 text-amber-500" />
-          </div>
-        </div>
+        <StatCard
+          title="Pending Requests"
+          value={pendingRequestsCount}
+          icon={GitPullRequest}
+          iconColorClass="text-amber-500"
+          iconBgClass="bg-amber-500/5"
+          glowColorClass="bg-amber-500/5"
+        />
 
-        {/* Monthly Earnings */}
-        <div className="rounded-2xl border bg-card p-5 shadow-xs flex items-center justify-between">
-          <div className="space-y-1.5">
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Monthly Value
-            </p>
-            <p className="text-2xl font-black text-foreground">
-              ৳{portfolioRentAmount.toLocaleString()}
-            </p>
-          </div>
-          <div className="rounded-xl bg-emerald-500/5 p-3">
-            <TrendingUp className="size-6 text-emerald-500" />
-          </div>
-        </div>
+        <StatCard
+          title="Monthly Value"
+          value={`৳${portfolioRentAmount.toLocaleString()}`}
+          icon={TrendingUp}
+          iconColorClass="text-emerald-500"
+          iconBgClass="bg-emerald-500/5"
+          glowColorClass="bg-emerald-500/5"
+        />
       </section>
 
       {/* Listings list section */}

@@ -1,6 +1,7 @@
 import { apiFetch } from "@/lib/api-client";
 import { notFound } from "next/navigation";
-import { EditPropertyForm } from "../../../_component/edit-property-form";
+import { PropertyForm } from "../../../_component/property-form";
+import { updatePropertyAction } from "../../../_actions/landlord";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -49,7 +50,12 @@ export default async function EditPropertyPage({ params }: Props) {
       </section>
 
       <section className="rounded-2xl border bg-card shadow-xs">
-        <EditPropertyForm property={property} categories={categories} />
+        <PropertyForm
+          mode="edit"
+          action={updatePropertyAction}
+          categories={categories}
+          initialData={property}
+        />
       </section>
     </main>
   );

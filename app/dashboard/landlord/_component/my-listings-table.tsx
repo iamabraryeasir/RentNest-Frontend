@@ -1,12 +1,12 @@
 "use client";
 
 import { deletePropertyAction } from "@/app/dashboard/landlord/_actions/landlord";
-import { Button } from "@/components/ui/button";
 import { Property } from "@/components/property-card";
-import { cn } from "@/lib/utils";
+import { StatusBadge } from "@/components/status-badge";
+import { Button } from "@/components/ui/button";
 import { Edit, Home, Loader2, Trash2 } from "lucide-react";
 import Link from "next/link";
-import * as React from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 interface MyListingsTableProps {
@@ -14,8 +14,8 @@ interface MyListingsTableProps {
 }
 
 export function MyListingsTable({ properties }: MyListingsTableProps) {
-  const [deletingId, setDeletingId] = React.useState<string | null>(null);
-  const [deleteConfirmId, setDeleteConfirmId] = React.useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
     setDeletingId(id);
@@ -58,7 +58,10 @@ export function MyListingsTable({ properties }: MyListingsTableProps) {
               const isDeleting = deletingId === prop.id;
 
               return (
-                <tr key={prop.id} className="hover:bg-muted/10 transition-colors">
+                <tr
+                  key={prop.id}
+                  className="hover:bg-muted/10 transition-colors"
+                >
                   <td className="px-6 py-3">
                     <div className="h-12 w-20 rounded-lg overflow-hidden border border-border/85 bg-muted shrink-0">
                       {hasImage ? (
@@ -89,21 +92,11 @@ export function MyListingsTable({ properties }: MyListingsTableProps) {
                     ৳{formattedRent}
                   </td>
                   <td className="px-6 py-3 text-muted-foreground font-medium">
-                    {prop.bedrooms} Bed | {prop.bathrooms} Bath | {prop.propertySize} sqft
+                    {prop.bedrooms} Bed | {prop.bathrooms} Bath |{" "}
+                    {prop.propertySize} sqft
                   </td>
                   <td className="px-6 py-3">
-                    <span
-                      className={cn(
-                        "inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
-                        prop.status === "AVAILABLE"
-                          ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-                          : prop.status === "RENTED"
-                          ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
-                          : "bg-muted text-muted-foreground border-border/60"
-                      )}
-                    >
-                      {prop.status}
-                    </span>
+                    <StatusBadge status={prop.status || "UNAVAILABLE"} />
                   </td>
                   <td className="px-6 py-3 text-right">
                     <div className="flex justify-end gap-2">
@@ -111,7 +104,11 @@ export function MyListingsTable({ properties }: MyListingsTableProps) {
                         variant="outline"
                         size="icon"
                         disabled={isDeleting}
-                        render={<Link href={`/dashboard/landlord/properties/${prop.id}/edit`} />}
+                        render={
+                          <Link
+                            href={`/dashboard/landlord/properties/${prop.id}/edit`}
+                          />
+                        }
                         className="h-8 w-8 rounded-lg cursor-pointer hover:bg-muted"
                         aria-label="Edit property"
                       >
@@ -157,7 +154,8 @@ export function MyListingsTable({ properties }: MyListingsTableProps) {
                   Delete Listing?
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Are you sure you want to delete this listing? This action is permanent and cannot be undone.
+                  Are you sure you want to delete this listing? This action is
+                  permanent and cannot be undone.
                 </p>
               </div>
             </div>

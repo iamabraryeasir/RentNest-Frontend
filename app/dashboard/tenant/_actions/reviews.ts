@@ -1,0 +1,88 @@
+"use server";
+
+import { apiFetch } from "@/lib/api-client";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+const reviewSchema = z.object({
+  propertyId: z.string().min(1, "Property ID is required."),
+  rating: z.preprocess(
+    (val) => Number(val),
+    z
+      .number()
+      .int()
+      .min(1, "Please select at least 1 star.")
+      .max(5, "Maximum rating is 5 stars."),
+  ),
+  comment: z
+    .string()
+    .trim()
+    .min(5, "Review comment must be at least 5 characters."),
+});
+
+export type ReviewState = {
+  success: boolean;
+  message: string;
+  errors?: {
+    propertyId?: string[];
+    rating?: string[];
+    comment?: string[];
+  };
+};
+
+export async function submitReviewAction(
+  _prevState: ReviewState | undefined,
+  formData: FormData,
+): Promise<ReviewState> {
+  const parsed = reviewSchema.safeParse({
+    propertyId: formData.get("propertyId"),
+    rating: formData.get("rating"),
+    comment: formData.get("comment"),
+  });
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: "Please correct the review form validation errors.",
+      errors: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  const { propertyId, rating, comment } = parsed.data;
+
+  try {
+    const response = await apiFetch("/api/reviews", {
+      method: "POST",
+      body: JSON.stringify({
+        propertyId,
+        rating,
+        comment,
+      }),
+    });
+
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message:
+          payload?.message ||
+          payload?.error ||
+          "Failed to submit property review.",
+      };
+    }
+
+    revalidatePath(`/properties/${propertyId}`);
+    revalidatePath("/dashboard/tenant");
+
+    return {
+      success: true,
+      message: payload?.message || "Review submitted successfully! Thank you.",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: `Failed to connect to the backend server. ${error instanceof Error ? error.message : ""}`,
+    };
+  }
+}

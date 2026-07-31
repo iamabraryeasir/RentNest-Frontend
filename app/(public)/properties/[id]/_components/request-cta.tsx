@@ -51,16 +51,10 @@ export function RequestCTA({
     }
   }, [state, router]);
 
-  // Set default dates (start date = tomorrow, end date = 6 months later)
+  // Set default dates (start date = tomorrow)
   const tomorrowStr = React.useMemo(() => {
     const d = new Date();
     d.setDate(d.getDate() + 1);
-    return d.toISOString().split("T")[0];
-  }, []);
-
-  const defaultEndStr = React.useMemo(() => {
-    const d = new Date();
-    d.setMonth(d.getMonth() + 6);
     return d.toISOString().split("T")[0];
   }, []);
 
@@ -163,62 +157,57 @@ export function RequestCTA({
             <form action={formAction} className="mt-4 space-y-4">
               <input type="hidden" name="propertyId" value={propertyId} />
 
-              <div className="grid grid-cols-2 gap-4">
-                {/* Start Date */}
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="startDate"
-                    className="text-xs font-bold text-foreground uppercase tracking-wider block"
-                  >
-                    Start Date
-                  </label>
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-2.5 size-4 text-muted-foreground pointer-events-none" />
-                    <input
-                      id="startDate"
-                      name="startDate"
-                      type="date"
-                      required
-                      disabled={pending}
-                      defaultValue={tomorrowStr}
-                      min={tomorrowStr}
-                      className="w-full pl-9 pr-3 py-2 border border-border rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                  </div>
-                  {state.errors?.startDate?.map((err) => (
-                    <p key={err} className="text-xs text-destructive mt-0.5">
-                      {err}
-                    </p>
-                  ))}
+              {/* Move-In Date */}
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="requestedMoveIn"
+                  className="text-xs font-bold text-foreground uppercase tracking-wider block"
+                >
+                  Requested Move-In Date
+                </label>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-2.5 size-4 text-muted-foreground pointer-events-none" />
+                  <input
+                    id="requestedMoveIn"
+                    name="requestedMoveIn"
+                    type="date"
+                    required
+                    disabled={pending}
+                    defaultValue={tomorrowStr}
+                    min={tomorrowStr}
+                    className="w-full pl-9 pr-3 py-2 border border-border rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
                 </div>
+                {state.errors?.requestedMoveIn?.map((err) => (
+                  <p key={err} className="text-xs text-destructive mt-0.5">
+                    {err}
+                  </p>
+                ))}
+              </div>
 
-                {/* End Date */}
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="endDate"
-                    className="text-xs font-bold text-foreground uppercase tracking-wider block"
-                  >
-                    End Date
-                  </label>
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-2.5 size-4 text-muted-foreground pointer-events-none" />
-                    <input
-                      id="endDate"
-                      name="endDate"
-                      type="date"
-                      required
-                      disabled={pending}
-                      defaultValue={defaultEndStr}
-                      min={tomorrowStr}
-                      className="w-full pl-9 pr-3 py-2 border border-border rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                  </div>
-                  {state.errors?.endDate?.map((err) => (
-                    <p key={err} className="text-xs text-destructive mt-0.5">
-                      {err}
-                    </p>
-                  ))}
-                </div>
+              {/* Message to Landlord */}
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="message"
+                  className="text-xs font-bold text-foreground uppercase tracking-wider block"
+                >
+                  Message to Landlord
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  required
+                  rows={3}
+                  disabled={pending}
+                  defaultValue="I'm interested in renting this property."
+                  placeholder="Introduce yourself or leave a message for the landlord..."
+                  className="w-full px-3 py-2 border border-border rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground disabled:opacity-50 resize-none"
+                />
+                {state.errors?.message?.map((err) => (
+                  <p key={err} className="text-xs text-destructive mt-0.5">
+                    {err}
+                  </p>
+                ))}
               </div>
 
               {/* Tips or Summary info */}

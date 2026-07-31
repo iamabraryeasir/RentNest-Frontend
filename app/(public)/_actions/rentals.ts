@@ -6,8 +6,8 @@ import { z } from "zod";
 
 const rentalRequestSchema = z.object({
   propertyId: z.string().min(1, "Property ID is required."),
-  startDate: z.string().min(1, "Start date is required."),
-  endDate: z.string().min(1, "End date is required."),
+  requestedMoveIn: z.string().min(1, "Requested move-in date is required."),
+  message: z.string().min(1, "Message is required."),
 });
 
 export type RentalRequestState = {
@@ -15,8 +15,8 @@ export type RentalRequestState = {
   message: string;
   errors?: {
     propertyId?: string[];
-    startDate?: string[];
-    endDate?: string[];
+    requestedMoveIn?: string[];
+    message?: string[];
   };
 };
 
@@ -26,27 +26,39 @@ export async function submitRentalRequestAction(
 ): Promise<RentalRequestState> {
   const parsed = rentalRequestSchema.safeParse({
     propertyId: formData.get("propertyId"),
-    startDate: formData.get("startDate"),
-    endDate: formData.get("endDate"),
+    requestedMoveIn: formData.get("requestedMoveIn"),
+    message: formData.get("message"),
   });
 
   if (!parsed.success) {
     return {
       success: false,
-      message: "Please fix validation errors.",
+      message: "Please correct the validation errors.",
       errors: parsed.error.flatten().fieldErrors,
     };
   }
 
-  const { propertyId, startDate, endDate } = parsed.data;
+  const { propertyId, requestedMoveIn, message } = parsed.data;
+
+  // Convert move-in date to ISO-8601 string format
+  let isoMoveInDate: string;
+  try {
+    isoMoveInDate = new Date(requestedMoveIn).toISOString();
+  } catch (err) {
+    return {
+      success: false,
+      message: "Invalid requested move-in date format.",
+      errors: { requestedMoveIn: ["Invalid date value."] },
+    };
+  }
 
   try {
     const response = await apiFetch("/api/rentals", {
       method: "POST",
       body: JSON.stringify({
         propertyId,
-        startDate,
-        endDate,
+        requestedMoveIn: isoMoveInDate,
+        message,
       }),
     });
 

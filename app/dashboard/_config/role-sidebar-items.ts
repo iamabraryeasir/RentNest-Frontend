@@ -1,10 +1,10 @@
 import {
   CreditCard,
+  Folder,
   GitPullRequest,
   Home,
   LayoutDashboard,
   PlusCircle,
-  Settings,
   Users,
 } from "lucide-react";
 import React from "react";
@@ -64,14 +64,24 @@ export const roleSidebarItems: Record<string, SidebarItem[]> = {
       icon: LayoutDashboard,
     },
     {
+      text: "Categories",
+      path: "/dashboard/admin/categories",
+      icon: Folder,
+    },
+    {
+      text: "Moderate Properties",
+      path: "/dashboard/admin/properties",
+      icon: Home,
+    },
+    {
+      text: "Rental Requests",
+      path: "/dashboard/admin/requests",
+      icon: GitPullRequest,
+    },
+    {
       text: "Manage Users",
       path: "/dashboard/admin/users",
       icon: Users,
-    },
-    {
-      text: "Settings",
-      path: "/dashboard/admin/settings",
-      icon: Settings,
     },
   ],
 };

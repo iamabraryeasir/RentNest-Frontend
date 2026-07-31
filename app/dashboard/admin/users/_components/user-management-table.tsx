@@ -6,20 +6,19 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
-  Search,
   Shield,
-  SlidersHorizontal,
   Trash2,
   UserCheck,
   UserX,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import toast from "react-hot-toast";
 import {
   deleteUserAction,
   toggleUserStatusAction,
 } from "../_actions/user-actions";
+import { UserManagementFilters } from "./user-management-filters";
 
 export interface User {
   id: string;
@@ -62,14 +61,6 @@ export function UserManagementTable({
   const [isPending, startTransition] = useTransition();
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
-  // Local state for the search input
-  const [searchVal, setSearchVal] = useState(filters.search);
-
-  // Sync state if filters prop updates from URL parameter changes (e.g., back navigation)
-  useEffect(() => {
-    setSearchVal(filters.search);
-  }, [filters.search]);
-
   // General URL query synchronizer
   const updateQuery = (
     newParams: Record<string, string | number | undefined>,
@@ -95,21 +86,6 @@ export function UserManagementTable({
   };
 
   // Debouncing effect for search parameter
-  useEffect(() => {
-    if (searchVal === filters.search) return;
-
-    const timer = setTimeout(() => {
-      updateQuery({ search: searchVal });
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchVal, filters.search]);
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Immediate query update on explicit Enter press
-    updateQuery({ search: searchVal });
-  };
 
   const handleToggleStatus = async (id: string, currentStatus: string) => {
     if (id === currentUserId) {
@@ -163,119 +139,11 @@ export function UserManagementTable({
 
   return (
     <div className="space-y-6">
-      {/* Search and Filters */}
-      <div className="flex flex-col gap-4 p-5 rounded-2xl border bg-card/65 shadow-xs">
-        <div className="flex items-center gap-2 border-b pb-3 mb-1">
-          <SlidersHorizontal className="size-4 text-primary" />
-          <h3 className="text-sm font-bold text-foreground">
-            Advanced Query Filters
-          </h3>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-12">
-          {/* Search bar */}
-          <form
-            onSubmit={handleSearchSubmit}
-            className="md:col-span-5 flex gap-2"
-          >
-            <input
-              type="text"
-              placeholder="Search users by name or email..."
-              value={searchVal}
-              onChange={(e) => setSearchVal(e.target.value)}
-              className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary outline-none"
-            />
-            <Button
-              type="submit"
-              disabled={isPending}
-              className="cursor-pointer rounded-xl text-xs font-semibold px-4"
-            >
-              <Search className="size-3.5 mr-1.5" /> Search
-            </Button>
-          </form>
-
-          {/* Sort By Select */}
-          <div className="md:col-span-3 flex items-center gap-2">
-            <label
-              htmlFor="sortBy"
-              className="text-xs font-bold text-muted-foreground shrink-0"
-            >
-              Sort
-            </label>
-            <select
-              id="sortBy"
-              value={filters.sortBy}
-              onChange={(e) => updateQuery({ sortBy: e.target.value })}
-              className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-xs focus-visible:outline-none outline-none"
-            >
-              <option value="name">Name</option>
-              <option value="email">Email</option>
-              <option value="role">Role</option>
-              <option value="status">Status</option>
-              <option value="createdAt">Joined Date</option>
-            </select>
-          </div>
-
-          {/* Sort Order Toggle */}
-          <div className="md:col-span-2 flex items-center gap-2">
-            <label
-              htmlFor="sortOrder"
-              className="text-xs font-bold text-muted-foreground shrink-0"
-            >
-              Order
-            </label>
-            <select
-              id="sortOrder"
-              value={filters.sortOrder}
-              onChange={(e) => updateQuery({ sortOrder: e.target.value })}
-              className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-xs focus-visible:outline-none outline-none"
-            >
-              <option value="asc">Ascending</option>
-              <option value="desc">Descending</option>
-            </select>
-          </div>
-
-          {/* Status filter select */}
-          <div className="md:col-span-2 flex items-center gap-2">
-            <label
-              htmlFor="statusFilter"
-              className="text-xs font-bold text-muted-foreground shrink-0"
-            >
-              Status
-            </label>
-            <select
-              id="statusFilter"
-              value={filters.status}
-              onChange={(e) => updateQuery({ status: e.target.value })}
-              className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-xs focus-visible:outline-none outline-none"
-            >
-              <option value="ALL">All Status</option>
-              <option value="ACTIVE">Active Only</option>
-              <option value="BLOCKED">Blocked Only</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Roles Quick Buttons bar */}
-        <div className="flex items-center gap-2 select-none border-t pt-3 mt-1 overflow-x-auto">
-          <span className="text-xs font-bold text-muted-foreground mr-1">
-            Filter Role:
-          </span>
-          {["ALL", "TENANT", "LANDLORD", "ADMIN"].map((role) => (
-            <button
-              key={role}
-              onClick={() => updateQuery({ role })}
-              className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all cursor-pointer border ${
-                filters.role === role
-                  ? "bg-primary text-primary-foreground border-primary shadow-xs"
-                  : "text-muted-foreground bg-background hover:bg-muted border-border"
-              }`}
-            >
-              {role}
-            </button>
-          ))}
-        </div>
-      </div>
+      <UserManagementFilters
+        filters={filters}
+        isPending={isPending}
+        updateQuery={updateQuery}
+      />
 
       {users.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/45 p-12 text-center h-[280px]">

@@ -6,6 +6,7 @@ import {
 } from "@/app/auth/_actions/register";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -14,11 +15,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { AlertCircle, Check, Key, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { RegisterRoleSelector } from "./register-role-selector";
 
 const initialState: RegisterState = {
   success: false,
@@ -113,103 +114,25 @@ export function RegisterForm() {
             onSubmit={handleSubmit}
             className="space-y-5"
           >
-            {/* Account Type (Role) Selector */}
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground">
-                I want to register as a:
-              </label>
-
-              <input type="hidden" name="role" value={selectedRole} />
-
-              <div className="grid grid-cols-2 gap-4 pt-1">
-                {/* Tenant Card */}
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setSelectedRole("TENANT")}
-                  disabled={isRegistering}
-                  className={cn(
-                    "relative flex items-center justify-between p-3.5 rounded-xl h-auto text-left font-normal transition-all duration-200 cursor-pointer select-none border border-border w-full shadow-none",
-                    selectedRole === "TENANT"
-                      ? "border-primary bg-primary/5 hover:bg-primary/5 hover:text-foreground"
-                      : "hover:border-primary/50 hover:bg-muted/40 hover:text-foreground",
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`p-2 rounded-lg ${selectedRole === "TENANT" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
-                    >
-                      <User className="size-5" />
-                    </div>
-                    <span className="font-semibold text-foreground text-sm">
-                      Tenant
-                    </span>
-                  </div>
-                  {selectedRole === "TENANT" ? (
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
-                      <Check className="size-3" />
-                    </span>
-                  ) : (
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full border border-border bg-background" />
-                  )}
-                </Button>
-
-                {/* Landlord Card */}
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setSelectedRole("LANDLORD")}
-                  disabled={isRegistering}
-                  className={cn(
-                    "relative flex items-center justify-between p-3.5 rounded-xl h-auto text-left font-normal transition-all duration-200 cursor-pointer select-none border border-border w-full shadow-none",
-                    selectedRole === "LANDLORD"
-                      ? "border-primary bg-primary/5 hover:bg-primary/5 hover:text-foreground"
-                      : "hover:border-primary/50 hover:bg-muted/40 hover:text-foreground",
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`p-2 rounded-lg ${selectedRole === "LANDLORD" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
-                    >
-                      <Key className="size-5" />
-                    </div>
-                    <span className="font-semibold text-foreground text-sm">
-                      Landlord
-                    </span>
-                  </div>
-                  {selectedRole === "LANDLORD" ? (
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
-                      <Check className="size-3" />
-                    </span>
-                  ) : (
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full border border-border bg-background" />
-                  )}
-                </Button>
-              </div>
-
-              {state.errors?.role?.map((message) => (
-                <p
-                  key={message}
-                  className="text-sm text-destructive flex items-center gap-1 mt-1 font-medium"
-                >
-                  <AlertCircle className="size-4" /> {message}
-                </p>
-              ))}
-            </div>
+            <RegisterRoleSelector
+              selectedRole={selectedRole}
+              setSelectedRole={setSelectedRole}
+              isRegistering={isRegistering}
+              errors={state.errors?.role}
+            />
 
             {/* Name Input */}
             <div className="space-y-1.5">
               <label htmlFor="name" className="text-sm font-medium">
                 Full Name
               </label>
-              <input
+              <Input
                 id="name"
                 name="name"
                 type="text"
                 required
                 disabled={isRegistering}
                 placeholder="John Doe"
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground/60 disabled:opacity-50 disabled:cursor-not-allowed"
               />
               {state.errors?.name?.map((message) => (
                 <p key={message} className="text-sm text-destructive mt-0.5">
@@ -223,14 +146,13 @@ export function RegisterForm() {
               <label htmlFor="email" className="text-sm font-medium">
                 Email Address
               </label>
-              <input
+              <Input
                 id="email"
                 name="email"
                 type="email"
                 required
                 disabled={isRegistering}
                 placeholder="john@example.com"
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground/60 disabled:opacity-50 disabled:cursor-not-allowed"
               />
               {state.errors?.email?.map((message) => (
                 <p key={message} className="text-sm text-destructive mt-0.5">
@@ -245,7 +167,7 @@ export function RegisterForm() {
                 <label htmlFor="password" className="text-sm font-medium">
                   Password
                 </label>
-                <input
+                <Input
                   id="password"
                   name="password"
                   type="password"
@@ -254,7 +176,6 @@ export function RegisterForm() {
                   placeholder="Min. 6 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground/60 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 {state.errors?.password?.map((message) => (
                   <p key={message} className="text-sm text-destructive mt-0.5">
@@ -270,7 +191,7 @@ export function RegisterForm() {
                 >
                   Confirm Password
                 </label>
-                <input
+                <Input
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"
@@ -279,7 +200,6 @@ export function RegisterForm() {
                   placeholder="Repeat password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground/60 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 {clientErrors.confirmPassword?.map((message) => (
                   <p key={message} className="text-sm text-destructive mt-0.5">

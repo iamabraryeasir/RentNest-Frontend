@@ -2,6 +2,7 @@
 
 import { loginAction, type LoginState } from "@/app/auth/_actions/login";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -78,13 +79,12 @@ export function LoginForm() {
               <label htmlFor="email" className="text-sm font-medium">
                 Email
               </label>
-              <input
+              <Input
                 id="email"
                 name="email"
                 type="email"
                 disabled={isLoggingIn}
                 placeholder="tenant@example.com"
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
               />
               {state.errors?.email?.map((message) => (
                 <p key={message} className="text-sm text-destructive">
@@ -97,13 +97,12 @@ export function LoginForm() {
               <label htmlFor="password" className="text-sm font-medium">
                 Password
               </label>
-              <input
+              <Input
                 id="password"
                 name="password"
                 type="password"
                 disabled={isLoggingIn}
                 placeholder="Enter password"
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
               />
               {state.errors?.password?.map((message) => (
                 <p key={message} className="text-sm text-destructive">

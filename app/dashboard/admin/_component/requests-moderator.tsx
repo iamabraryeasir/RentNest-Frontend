@@ -2,6 +2,7 @@
 
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { GitPullRequest, Loader2 } from "lucide-react";
 import { useState, useTransition } from "react";
 import toast from "react-hot-toast";
@@ -83,12 +84,12 @@ export function RequestsModerator({ requests }: RequestsModeratorProps) {
           </p>
         </div>
         <div className="w-full sm:w-64">
-          <input
+          <Input
             type="text"
             placeholder="Search by property, tenant or status..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex h-9 w-full rounded-xl border border-input bg-card px-3 py-2 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+            className="h-9 text-xs"
           />
         </div>
       </div>

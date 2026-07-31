@@ -35,12 +35,15 @@ export function DashboardShell({ children, user, role }: DashboardShellProps) {
           <Link href="/" className="flex items-center gap-2">
             <Logo iconSize={26} className="text-xl font-bold" />
           </Link>
-          <button
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
             onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden flex h-8 w-8 items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
+            className="md:hidden size-8 cursor-pointer"
           >
             <X className="size-4" />
-          </button>
+          </Button>
         </div>
 
         {/* Navigation Section */}

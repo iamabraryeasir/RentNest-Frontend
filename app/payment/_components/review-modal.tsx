@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { useEffect } from "react";
 import { ReviewForm } from "./review-form";
@@ -34,13 +35,15 @@ export function ReviewModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div className="relative w-full max-w-lg rounded-2xl border border-border bg-card shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden">
         {/* Close Button */}
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           onClick={onClose}
-          className="absolute right-4 top-4 z-10 rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+          className="absolute right-4 top-4 z-10 cursor-pointer"
         >
           <X className="size-5" />
-        </button>
+        </Button>
 
         {/* Form Container */}
         <ReviewForm

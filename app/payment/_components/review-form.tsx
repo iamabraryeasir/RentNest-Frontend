@@ -5,6 +5,7 @@ import {
   type ReviewState,
 } from "@/app/dashboard/tenant/_actions/reviews";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Loader2, MessageSquare, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
@@ -126,7 +127,7 @@ export function ReviewForm({
           </label>
           <div className="relative">
             <MessageSquare className="absolute left-3 top-2.5 size-4 text-muted-foreground pointer-events-none" />
-            <textarea
+            <Textarea
               id="comment"
               name="comment"
               required
@@ -135,7 +136,7 @@ export function ReviewForm({
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Tell other tenants about the landlord response, property condition, and neighbor atmosphere..."
-              className="w-full pl-9 pr-3 py-2 border border-border rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground disabled:opacity-50 resize-none"
+              className="pl-9 resize-none"
             />
           </div>
           {state.errors?.comment?.map((err) => (

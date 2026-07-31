@@ -19,13 +19,16 @@ export function ReviewTriggerButton({
 
   return (
     <>
-      <button
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
         onClick={() => setIsOpen(true)}
-        className="text-xs font-bold text-primary flex items-center gap-1 hover:underline cursor-pointer"
+        className="h-auto p-1 text-xs font-bold text-primary flex items-center gap-1 hover:underline cursor-pointer"
       >
         <Star className="size-3.5 fill-current text-primary shrink-0" />
         <span>Review</span>
-      </button>
+      </Button>
 
       <ReviewModal
         isOpen={isOpen}

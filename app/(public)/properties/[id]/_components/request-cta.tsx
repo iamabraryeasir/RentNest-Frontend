@@ -6,11 +6,13 @@ import {
 } from "@/app/(public)/_actions/rentals";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { Calendar, HelpCircle, Loader2, Lock, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
 interface RequestCTAProps {
@@ -54,8 +56,20 @@ export function RequestCTA({
     }
   }, [state, router]);
 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
   // Set default dates (start date = tomorrow)
-  const tomorrowStr = React.useMemo(() => {
+  const tomorrowStr = useMemo(() => {
     const d = new Date();
     d.setDate(d.getDate() + 1);
     return d.toISOString().split("T")[0];
@@ -159,13 +173,15 @@ export function RequestCTA({
                   Send a booking request to the landlord.
                 </p>
               </div>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => setIsOpen(false)}
-                className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+                className="cursor-pointer"
               >
                 <X className="size-5" />
-              </button>
+              </Button>
             </div>
 
             {/* Form */}
@@ -182,7 +198,7 @@ export function RequestCTA({
                 </label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-2.5 size-4 text-muted-foreground pointer-events-none" />
-                  <input
+                  <Input
                     id="requestedMoveIn"
                     name="requestedMoveIn"
                     type="date"
@@ -190,7 +206,7 @@ export function RequestCTA({
                     disabled={pending}
                     defaultValue={tomorrowStr}
                     min={tomorrowStr}
-                    className="w-full pl-9 pr-3 py-2 border border-border rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="pl-9"
                   />
                 </div>
                 {state.errors?.requestedMoveIn?.map((err) => (
@@ -208,7 +224,7 @@ export function RequestCTA({
                 >
                   Message to Landlord
                 </label>
-                <textarea
+                <Textarea
                   id="message"
                   name="message"
                   required
@@ -216,7 +232,7 @@ export function RequestCTA({
                   disabled={pending}
                   defaultValue="I'm interested in renting this property."
                   placeholder="Introduce yourself or leave a message for the landlord..."
-                  className="w-full px-3 py-2 border border-border rounded-xl bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground disabled:opacity-50 resize-none"
+                  className="resize-none"
                 />
                 {state.errors?.message?.map((err) => (
                   <p key={err} className="text-xs text-destructive mt-0.5">

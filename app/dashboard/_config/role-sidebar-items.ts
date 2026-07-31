@@ -32,11 +32,6 @@ export const roleSidebarItems: Record<string, SidebarItem[]> = {
       path: "/dashboard/tenant/requests",
       icon: GitPullRequest,
     },
-    {
-      text: "Payments",
-      path: "/dashboard/tenant/payments",
-      icon: CreditCard,
-    },
   ],
 
   landlord: [

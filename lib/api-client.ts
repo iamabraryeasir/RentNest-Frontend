@@ -24,7 +24,13 @@ export async function apiFetch(
       if (token && !headers.has("Authorization")) {
         headers.set("Authorization", `Bearer ${token}`);
       }
-    } catch (e) {
+    } catch (e: any) {
+      if (
+        e?.digest === "DYNAMIC_SERVER_USAGE" ||
+        e?.message?.includes("Dynamic server usage")
+      ) {
+        throw e;
+      }
       console.warn("Failed to inject access token on server fetch:", e);
     }
   }
@@ -89,7 +95,13 @@ export async function apiFetch(
           }
         }
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (
+        error?.digest === "DYNAMIC_SERVER_USAGE" ||
+        error?.message?.includes("Dynamic server usage")
+      ) {
+        throw error;
+      }
       console.error("Token refresh failed in apiFetch:", error);
     }
   }

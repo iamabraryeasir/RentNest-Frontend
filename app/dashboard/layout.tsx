@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { DashboardShell } from "./_component/dashboard-shell";
 
+export const dynamic = "force-dynamic";
+
 const roleDashboards: Record<string, string> = {
   tenant: "/dashboard/tenant",
   landlord: "/dashboard/landlord",

@@ -6,6 +6,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SuccessReviewButton } from "../_components/review-trigger-button";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   searchParams: Promise<{ propertyId?: string }>;
 };

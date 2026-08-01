@@ -17,6 +17,5 @@ export async function logoutAction() {
   const cookieStore = await cookies();
   cookieStore.delete("accessToken");
   cookieStore.delete("refreshToken");
-  cookieStore.delete("role");
   redirect("/auth/login");
 }

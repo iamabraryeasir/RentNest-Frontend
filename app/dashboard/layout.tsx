@@ -15,9 +15,9 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const cookieStore = await cookies();
-  const role = cookieStore.get("role")?.value;
   const token = cookieStore.get("accessToken")?.value;
   const user = getAuthenticatedUserData(token);
+  const role = user?.role;
 
   if (!role || !roleDashboards[role]) {
     redirect("/auth/login?redirect=/dashboard");

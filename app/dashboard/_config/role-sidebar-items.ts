@@ -5,6 +5,8 @@ import {
   Home,
   LayoutDashboard,
   PlusCircle,
+  Receipt,
+  UserCheck,
   Users,
 } from "lucide-react";
 import React from "react";
@@ -32,6 +34,16 @@ export const roleSidebarItems: Record<string, SidebarItem[]> = {
       path: "/dashboard/tenant/requests",
       icon: GitPullRequest,
     },
+    {
+      text: "Payment History",
+      path: "/dashboard/tenant/payments",
+      icon: Receipt,
+    },
+    {
+      text: "Profile Settings",
+      path: "/dashboard/profile",
+      icon: UserCheck,
+    },
   ],
 
   landlord: [
@@ -49,6 +61,11 @@ export const roleSidebarItems: Record<string, SidebarItem[]> = {
       text: "Rental Requests",
       path: "/dashboard/landlord/requests",
       icon: GitPullRequest,
+    },
+    {
+      text: "Profile Settings",
+      path: "/dashboard/profile",
+      icon: UserCheck,
     },
   ],
 
@@ -77,6 +94,11 @@ export const roleSidebarItems: Record<string, SidebarItem[]> = {
       text: "Manage Users",
       path: "/dashboard/admin/users",
       icon: Users,
+    },
+    {
+      text: "Profile Settings",
+      path: "/dashboard/profile",
+      icon: UserCheck,
     },
   ],
 };

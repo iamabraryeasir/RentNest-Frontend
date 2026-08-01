@@ -18,8 +18,6 @@ export async function proxy(request: NextRequest) {
   // Read auth cookies
   let accessToken = request.cookies.get("accessToken")?.value;
   const refreshToken = request.cookies.get("refreshToken")?.value;
-  let rawRole = request.cookies.get("role")?.value;
-  let role = rawRole ? rawRole.toLowerCase() : "";
 
   const isAuthRoute = pathname.startsWith("/auth/");
   const isDashboardRoute =
@@ -35,7 +33,6 @@ export async function proxy(request: NextRequest) {
 
     if (refreshData?.accessToken) {
       accessToken = refreshData.accessToken;
-      role = (parseTokenRole(refreshData.accessToken) || role).toLowerCase();
       newAccessToken = refreshData.accessToken;
       newRefreshToken = refreshData.refreshToken || "";
       refreshed = true;
@@ -46,10 +43,12 @@ export async function proxy(request: NextRequest) {
       );
       response.cookies.delete("accessToken");
       response.cookies.delete("refreshToken");
-      response.cookies.delete("role");
       return response;
     }
   }
+
+  // Cryptographically derived user role from the signed JWT access token payload
+  const role = accessToken ? parseTokenRole(accessToken) || "" : "";
 
   // 2. Perform Routing Protection
   if (isDashboardRoute) {
@@ -127,7 +126,6 @@ export async function proxy(request: NextRequest) {
       request,
       newAccessToken,
       newRefreshToken,
-      role || "",
     );
   }
 

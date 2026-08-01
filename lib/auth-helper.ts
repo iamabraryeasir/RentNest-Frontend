@@ -92,7 +92,6 @@ export function syncAuthCookies(
   request: NextRequest,
   accessToken: string,
   refreshToken: string | undefined,
-  role: string,
 ): NextResponse {
   const secure = process.env.NODE_ENV === "production";
 
@@ -112,9 +111,6 @@ export function syncAuthCookies(
   cookieMap.set("accessToken", accessToken);
   if (refreshToken) {
     cookieMap.set("refreshToken", refreshToken);
-  }
-  if (role) {
-    cookieMap.set("role", role);
   }
 
   // 3. Serialize back to cookie header format
@@ -143,16 +139,6 @@ export function syncAuthCookies(
 
   if (refreshToken) {
     response.cookies.set("refreshToken", refreshToken, {
-      httpOnly: true,
-      path: "/",
-      sameSite: "lax",
-      secure,
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
-  }
-
-  if (role) {
-    response.cookies.set("role", role, {
       httpOnly: true,
       path: "/",
       sameSite: "lax",

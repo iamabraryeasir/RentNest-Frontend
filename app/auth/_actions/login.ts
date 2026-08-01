@@ -94,14 +94,6 @@ export async function loginAction(
       });
     }
 
-    cookieStore.set("role", role ?? "", {
-      httpOnly: true,
-      path: "/",
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
-
     if (!role || !["tenant", "landlord", "admin"].includes(role)) {
       return {
         success: false,

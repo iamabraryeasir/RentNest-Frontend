@@ -1,4 +1,5 @@
 import { apiFetch } from "@/lib/api-client";
+import { getAuthenticatedUserData } from "@/lib/auth";
 import { CheckCircle2, Home } from "lucide-react";
 import { cookies } from "next/headers";
 import Link from "next/link";
@@ -12,10 +13,10 @@ type Props = {
 export default async function PaymentSuccessPage({ searchParams }: Props) {
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value;
-  const role = cookieStore.get("role")?.value;
+  const user = getAuthenticatedUserData(token);
 
   // Protect the route: Only logged-in tenants can access payment success details
-  if (!token || role !== "tenant") {
+  if (!token || user?.role !== "tenant") {
     redirect(`/auth/login?redirect=/payment/success`);
   }
 

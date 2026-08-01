@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { getAuthenticatedUserData } from "@/lib/auth";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 import { cookies } from "next/headers";
 import Link from "next/link";
@@ -7,10 +8,10 @@ import { redirect } from "next/navigation";
 export default async function PaymentCancelPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value;
-  const role = cookieStore.get("role")?.value;
+  const user = getAuthenticatedUserData(token);
 
   // Protect the route: Only logged-in tenants should view the cancellation status
-  if (!token || role !== "tenant") {
+  if (!token || user?.role !== "tenant") {
     redirect(`/auth/login?redirect=/payment/cancel`);
   }
 

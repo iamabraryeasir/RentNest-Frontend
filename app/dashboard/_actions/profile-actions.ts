@@ -48,12 +48,11 @@ export async function updateProfileAction(
 
   const updatePayload: Record<string, string> = {};
   if (name) updatePayload.name = name;
-  if (email) updatePayload.email = email;
 
   if (Object.keys(updatePayload).length === 0) {
     return {
       success: false,
-      message: "Please provide at least one field to update.",
+      message: "Please provide at least one valid field to update.",
     };
   }
 

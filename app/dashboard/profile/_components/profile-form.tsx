@@ -66,14 +66,19 @@ export function ProfileForm({ initialUser }: ProfileFormProps) {
         ))}
       </div>
 
-      {/* Email Input */}
+      {/* Email Input (Read Only) */}
       <div className="space-y-2">
-        <label
-          htmlFor="email"
-          className="text-xs font-bold uppercase tracking-wider text-foreground block"
-        >
-          Email Address
-        </label>
+        <div className="flex items-center justify-between">
+          <label
+            htmlFor="email"
+            className="text-xs font-bold uppercase tracking-wider text-foreground block"
+          >
+            Email Address
+          </label>
+          <span className="text-[10px] font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded">
+            Read-only
+          </span>
+        </div>
         <div className="relative">
           <Mail className="absolute left-3.5 top-3 size-4 text-muted-foreground pointer-events-none" />
           <Input
@@ -81,16 +86,13 @@ export function ProfileForm({ initialUser }: ProfileFormProps) {
             name="email"
             type="email"
             defaultValue={initialUser.email || ""}
-            placeholder="name@example.com"
-            disabled={pending}
-            className="pl-10"
+            disabled={true}
+            className="pl-10 bg-muted/30 cursor-not-allowed text-muted-foreground"
           />
         </div>
-        {state.errors?.email?.map((err) => (
-          <p key={err} className="text-xs text-destructive font-medium mt-1">
-            {err}
-          </p>
-        ))}
+        <p className="text-[11px] text-muted-foreground">
+          Email address is tied to your account identity and cannot be modified.
+        </p>
       </div>
 
       {/* Account Role Badge */}

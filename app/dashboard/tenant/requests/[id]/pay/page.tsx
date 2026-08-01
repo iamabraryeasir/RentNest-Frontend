@@ -19,13 +19,6 @@ type Props = {
 export default async function TenantPayPage({ params }: Props) {
   const { id } = await params;
 
-  const cookieStore = await cookies();
-  const role = cookieStore.get("role")?.value;
-
-  if (role !== "tenant") {
-    redirect("/dashboard");
-  }
-
   let rental: any = null;
   try {
     const response = await apiFetch(`/api/rentals/${id}`, {

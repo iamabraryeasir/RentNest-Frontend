@@ -275,3 +275,43 @@ export async function deletePropertyAction(
     };
   }
 }
+
+export async function updatePropertyListingStatusAction(
+  propertyId: string,
+  status: "AVAILABLE" | "RENTED" | "UNAVAILABLE",
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const response = await apiFetch(`/api/properties/${propertyId}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    });
+
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message:
+          payload?.message ||
+          payload?.error ||
+          `Failed to update property status to ${status.toLowerCase()}.`,
+      };
+    }
+
+    revalidatePath("/dashboard/landlord");
+    revalidatePath("/properties");
+    revalidatePath(`/properties/${propertyId}`);
+
+    return {
+      success: true,
+      message:
+        payload?.message ||
+        `Property status updated to ${status.toLowerCase()}!`,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: `Connection error. ${error instanceof Error ? error.message : ""}`,
+    };
+  }
+}

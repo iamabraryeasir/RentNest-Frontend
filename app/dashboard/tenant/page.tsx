@@ -8,19 +8,10 @@ import {
   GitPullRequest,
   Home,
 } from "lucide-react";
-import { cookies } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { TenantRequestsTable } from "./_component/tenant-requests-table";
 
 export default async function TenantDashboardPage() {
-  const cookieStore = await cookies();
-  const role = cookieStore.get("role")?.value;
-
-  if (role !== "tenant") {
-    redirect("/dashboard");
-  }
-
   let requests = [];
   try {
     const response = await apiFetch("/api/rentals/my-requests", {
@@ -55,12 +46,21 @@ export default async function TenantDashboardPage() {
             one dashboard.
           </p>
         </div>
-        <Button
-          render={<Link href="/properties" />}
-          className="cursor-pointer gap-2 rounded-xl py-5 shadow-sm font-semibold"
-        >
-          <Home className="size-4" /> Browse Properties
-        </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            variant="outline"
+            render={<Link href="/dashboard/tenant/payments" />}
+            className="cursor-pointer gap-2 rounded-xl py-5 font-semibold text-xs border-border"
+          >
+            <CreditCard className="size-4 text-primary" /> Payment History
+          </Button>
+          <Button
+            render={<Link href="/properties" />}
+            className="cursor-pointer gap-2 rounded-xl py-5 shadow-sm font-semibold"
+          >
+            <Home className="size-4" /> Browse Properties
+          </Button>
+        </div>
       </section>
 
       {/* Metrics Section */}

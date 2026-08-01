@@ -11,18 +11,9 @@ import {
   HelpCircle,
   MapPin,
 } from "lucide-react";
-import { cookies } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 export default async function TenantRequestsPage() {
-  const cookieStore = await cookies();
-  const role = cookieStore.get("role")?.value;
-
-  if (role !== "tenant") {
-    redirect("/dashboard");
-  }
-
   let requests = [];
   try {
     const response = await apiFetch("/api/rentals/my-requests", {

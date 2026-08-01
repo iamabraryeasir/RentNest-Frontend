@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   ChevronLeft,
   ChevronRight,
+  Eye,
   Loader2,
   Shield,
   Trash2,
@@ -18,6 +19,7 @@ import {
   deleteUserAction,
   toggleUserStatusAction,
 } from "../_actions/user-actions";
+import { UserDetailsModal } from "./user-details-modal";
 import { UserManagementFilters } from "./user-management-filters";
 
 export interface User {
@@ -60,6 +62,7 @@ export function UserManagementTable({
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   // General URL query synchronizer
   const updateQuery = (
@@ -240,6 +243,15 @@ export function UserManagementTable({
                                 <Button
                                   size="icon"
                                   variant="outline"
+                                  onClick={() => setSelectedUserId(user.id)}
+                                  className="size-8 rounded-lg cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted"
+                                  title="Inspect User Details"
+                                >
+                                  <Eye className="size-3.5" />
+                                </Button>
+                                <Button
+                                  size="icon"
+                                  variant="outline"
                                   onClick={() =>
                                     handleToggleStatus(user.id, status)
                                   }
@@ -313,6 +325,13 @@ export function UserManagementTable({
             </div>
           )}
         </div>
+      )}
+
+      {selectedUserId && (
+        <UserDetailsModal
+          userId={selectedUserId}
+          onClose={() => setSelectedUserId(null)}
+        />
       )}
     </div>
   );

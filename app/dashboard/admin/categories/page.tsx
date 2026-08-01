@@ -1,18 +1,9 @@
 import { apiFetch } from "@/lib/api-client";
 import { ArrowLeft, Folder } from "lucide-react";
-import { cookies } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { CategoryManager } from "../_component/category-manager";
 
 export default async function AdminCategoriesPage() {
-  const cookieStore = await cookies();
-  const role = cookieStore.get("role")?.value;
-
-  if (role !== "admin") {
-    redirect("/dashboard");
-  }
-
   let categories = [];
   try {
     const res = await apiFetch("/api/categories", { cache: "no-store" });

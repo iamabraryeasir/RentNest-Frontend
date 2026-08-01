@@ -1,18 +1,9 @@
 import { apiFetch } from "@/lib/api-client";
 import { ArrowLeft, GitPullRequest } from "lucide-react";
-import { cookies } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { RequestsModerator } from "../_component/requests-moderator";
 
 export default async function AdminRequestsPage() {
-  const cookieStore = await cookies();
-  const role = cookieStore.get("role")?.value;
-
-  if (role !== "admin") {
-    redirect("/dashboard");
-  }
-
   let requests = [];
   try {
     const res = await apiFetch("/api/rentals", { cache: "no-store" });

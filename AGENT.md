@@ -25,7 +25,7 @@ This repository is the frontend for the RentNest rental marketplace assignment. 
 5. For action-based submissions, use the useActionState hook.
 6. Explicitly handle pending, success, and error states.
 7. Show toast messages for important outcomes.
-8. Protect routes by role using Next.js middleware.
+8. Protect routes by role using proxy.ts in the project root. DO NOT use or create middleware.ts.
 9. Keep the implementation modular, reusable, and aligned with the assignment requirements.
 
 ## Assignment Expectations

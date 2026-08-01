@@ -1,3 +1,4 @@
+import { fetchPropertyReviewsAction } from "@/app/dashboard/tenant/_actions/reviews";
 import { Property } from "@/components/property-card";
 import { apiFetch } from "@/lib/api-client";
 import { getAuthenticatedUserData } from "@/lib/auth";
@@ -14,6 +15,7 @@ import {
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { PropertyReviews } from "./_components/property-reviews";
 import { RequestCTA } from "./_components/request-cta";
 
 type Props = {
@@ -23,16 +25,22 @@ type Props = {
 export default async function PropertyDetailsPage({ params }: Props) {
   const { id } = await params;
 
-  // 1. Fetch Property Details
+  // 1. Fetch Property Details & Reviews in Parallel
   let property: Property | null = null;
+  let reviews = [];
   try {
-    const response = await apiFetch(`/api/properties/${id}`, {
-      cache: "no-store",
-    });
+    const [response, reviewsRes] = await Promise.all([
+      apiFetch(`/api/properties/${id}`, { cache: "no-store" }),
+      fetchPropertyReviewsAction(id),
+    ]);
 
     if (response.ok) {
       const payload = await response.json();
       property = payload?.data || null;
+    }
+
+    if (reviewsRes.success) {
+      reviews = reviewsRes.data || [];
     }
   } catch (error) {
     console.error("Failed to load property detail data:", error);
@@ -163,6 +171,13 @@ export default async function PropertyDetailsPage({ params }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Property Reviews Section */}
+      <PropertyReviews
+        propertyId={property.id}
+        initialReviews={reviews}
+        currentUserId={user?.id}
+      />
     </main>
   );
 }

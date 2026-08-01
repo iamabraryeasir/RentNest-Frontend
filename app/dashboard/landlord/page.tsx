@@ -9,19 +9,10 @@ import {
   PlusCircle,
   TrendingUp,
 } from "lucide-react";
-import { cookies } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { MyListingsTable } from "./_component/my-listings-table";
 
 export default async function LandlordDashboardPage() {
-  const cookieStore = await cookies();
-  const role = cookieStore.get("role")?.value;
-
-  if (role !== "landlord") {
-    redirect("/dashboard");
-  }
-
   // Fetch properties and requests in parallel
   let properties: Property[] = [];
   let requests = [];

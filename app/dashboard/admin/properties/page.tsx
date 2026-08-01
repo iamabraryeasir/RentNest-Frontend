@@ -1,18 +1,9 @@
 import { apiFetch } from "@/lib/api-client";
 import { ArrowLeft, Home } from "lucide-react";
-import { cookies } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { ListingsModerator } from "../_component/listings-moderator";
 
 export default async function AdminPropertiesPage() {
-  const cookieStore = await cookies();
-  const role = cookieStore.get("role")?.value;
-
-  if (role !== "admin") {
-    redirect("/dashboard");
-  }
-
   let properties = [];
   try {
     const res = await apiFetch("/api/properties", { cache: "no-store" });

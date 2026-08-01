@@ -1,8 +1,10 @@
 "use client";
 
-import { deletePropertyAction } from "@/app/dashboard/landlord/_actions/landlord";
+import {
+  deletePropertyAction,
+  updatePropertyListingStatusAction,
+} from "@/app/dashboard/landlord/_actions/landlord";
 import { Property } from "@/components/property-card";
-import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Edit, Home, Loader2, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -16,6 +18,26 @@ interface MyListingsTableProps {
 export function MyListingsTable({ properties }: MyListingsTableProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [updatingStatusId, setUpdatingStatusId] = useState<string | null>(null);
+
+  const handleStatusChange = async (
+    id: string,
+    newStatus: "AVAILABLE" | "RENTED" | "UNAVAILABLE",
+  ) => {
+    setUpdatingStatusId(id);
+    try {
+      const res = await updatePropertyListingStatusAction(id, newStatus);
+      if (res.success) {
+        toast.success(res.message);
+      } else {
+        toast.error(res.message);
+      }
+    } catch (e) {
+      toast.error("Failed to update status.");
+    } finally {
+      setUpdatingStatusId(null);
+    }
+  };
 
   const handleDelete = async (id: string) => {
     setDeletingId(id);
@@ -96,7 +118,29 @@ export function MyListingsTable({ properties }: MyListingsTableProps) {
                     {prop.propertySize} sqft
                   </td>
                   <td className="px-6 py-3">
-                    <StatusBadge status={prop.status || "UNAVAILABLE"} />
+                    <div className="flex items-center gap-2">
+                      <select
+                        defaultValue={prop.status || "AVAILABLE"}
+                        disabled={updatingStatusId === prop.id || isDeleting}
+                        onChange={(e) =>
+                          handleStatusChange(
+                            prop.id,
+                            e.target.value as
+                              | "AVAILABLE"
+                              | "RENTED"
+                              | "UNAVAILABLE",
+                          )
+                        }
+                        className="text-xs font-semibold rounded-lg border border-border bg-background px-2.5 py-1 text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer disabled:opacity-50"
+                      >
+                        <option value="AVAILABLE">AVAILABLE</option>
+                        <option value="RENTED">RENTED</option>
+                        <option value="UNAVAILABLE">UNAVAILABLE</option>
+                      </select>
+                      {updatingStatusId === prop.id && (
+                        <Loader2 className="size-3.5 animate-spin text-primary shrink-0" />
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-3 text-right">
                     <div className="flex justify-end gap-2">

@@ -72,3 +72,30 @@ export async function deleteUserAction(
     };
   }
 }
+
+export async function fetchUserByIdAction(userId: string) {
+  try {
+    const response = await apiFetch(`/api/users/${userId}`, {
+      cache: "no-store",
+    });
+
+    if (response.ok) {
+      const payload = await response.json();
+      return {
+        success: true,
+        data: payload?.data || null,
+      };
+    }
+
+    return {
+      success: false,
+      data: null,
+    };
+  } catch (error) {
+    console.error("Failed to fetch user by ID:", error);
+    return {
+      success: false,
+      data: null,
+    };
+  }
+}

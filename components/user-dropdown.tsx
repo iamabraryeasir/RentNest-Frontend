@@ -74,6 +74,18 @@ export function UserDropdown({ user }: UserDropdownProps) {
         </DropdownMenuItem>
 
         <DropdownMenuItem
+          render={
+            <Link
+              href="/dashboard/profile"
+              className="flex w-full items-center gap-2 px-2.5 py-2 rounded-md hover:bg-muted text-sm text-foreground transition-colors cursor-pointer"
+            />
+          }
+        >
+          <User className="size-4 text-muted-foreground" />
+          <span>Profile Settings</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem
           onClick={handleLogout}
           disabled={isPending}
           className="flex w-full items-center gap-2 px-2.5 py-2 rounded-md hover:bg-destructive/10 text-sm text-destructive hover:text-destructive transition-colors cursor-pointer focus:bg-destructive/10 focus:text-destructive"

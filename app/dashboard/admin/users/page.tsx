@@ -20,13 +20,8 @@ interface PageProps {
 
 export default async function AdminUsersPage({ searchParams }: PageProps) {
   const cookieStore = await cookies();
-  const role = cookieStore.get("role")?.value;
   const token = cookieStore.get("accessToken")?.value;
   const user = getAuthenticatedUserData(token);
-
-  if (role !== "admin") {
-    redirect("/dashboard");
-  }
 
   const params = await searchParams;
   const page = params.page || "1";

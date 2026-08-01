@@ -86,3 +86,93 @@ export async function submitReviewAction(
     };
   }
 }
+
+export async function fetchPropertyReviewsAction(propertyId: string) {
+  try {
+    const response = await apiFetch(`/api/reviews/property/${propertyId}`, {
+      cache: "no-store",
+    });
+
+    if (response.ok) {
+      const payload = await response.json();
+      return {
+        success: true,
+        data: payload?.data || [],
+        meta: payload?.meta || null,
+      };
+    }
+    return { success: false, data: [] };
+  } catch (error) {
+    console.error("Failed to fetch property reviews:", error);
+    return { success: false, data: [] };
+  }
+}
+
+export async function updateReviewAction(
+  reviewId: string,
+  propertyId: string,
+  rating?: number,
+  comment?: string,
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const response = await apiFetch(`/api/reviews/${reviewId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ rating, comment }),
+    });
+
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: payload?.message || payload?.error || "Failed to update review.",
+      };
+    }
+
+    revalidatePath(`/properties/${propertyId}`);
+    revalidatePath("/dashboard/tenant");
+
+    return {
+      success: true,
+      message: payload?.message || "Review updated successfully!",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: `Connection error. ${error instanceof Error ? error.message : ""}`,
+    };
+  }
+}
+
+export async function deleteReviewAction(
+  reviewId: string,
+  propertyId: string,
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const response = await apiFetch(`/api/reviews/${reviewId}`, {
+      method: "DELETE",
+    });
+
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: payload?.message || payload?.error || "Failed to delete review.",
+      };
+    }
+
+    revalidatePath(`/properties/${propertyId}`);
+    revalidatePath("/dashboard/tenant");
+
+    return {
+      success: true,
+      message: payload?.message || "Review deleted successfully!",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: `Connection error. ${error instanceof Error ? error.message : ""}`,
+    };
+  }
+}

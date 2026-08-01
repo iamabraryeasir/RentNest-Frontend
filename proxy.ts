@@ -18,7 +18,8 @@ export async function proxy(request: NextRequest) {
   // Read auth cookies
   let accessToken = request.cookies.get("accessToken")?.value;
   const refreshToken = request.cookies.get("refreshToken")?.value;
-  let role = request.cookies.get("role")?.value;
+  let rawRole = request.cookies.get("role")?.value;
+  let role = rawRole ? rawRole.toLowerCase() : "";
 
   const isAuthRoute = pathname.startsWith("/auth/");
   const isDashboardRoute =
@@ -34,7 +35,7 @@ export async function proxy(request: NextRequest) {
 
     if (refreshData?.accessToken) {
       accessToken = refreshData.accessToken;
-      role = parseTokenRole(refreshData.accessToken) || role;
+      role = (parseTokenRole(refreshData.accessToken) || role).toLowerCase();
       newAccessToken = refreshData.accessToken;
       newRefreshToken = refreshData.refreshToken || "";
       refreshed = true;
@@ -63,7 +64,7 @@ export async function proxy(request: NextRequest) {
     // Role subpath protection (e.g. /dashboard/tenant/...)
     if (pathname.startsWith("/dashboard/tenant") && role !== "tenant") {
       const redirectUrl = new URL(
-        roleDashboards[role || ""] || "/dashboard",
+        roleDashboards[role] || "/dashboard",
         request.url,
       );
       redirectUrl.searchParams.set(
@@ -75,7 +76,7 @@ export async function proxy(request: NextRequest) {
 
     if (pathname.startsWith("/dashboard/landlord") && role !== "landlord") {
       const redirectUrl = new URL(
-        roleDashboards[role || ""] || "/dashboard",
+        roleDashboards[role] || "/dashboard",
         request.url,
       );
       redirectUrl.searchParams.set(
@@ -84,9 +85,10 @@ export async function proxy(request: NextRequest) {
       );
       return NextResponse.redirect(redirectUrl);
     }
+
     if (pathname.startsWith("/dashboard/admin") && role !== "admin") {
       const redirectUrl = new URL(
-        roleDashboards[role || ""] || "/dashboard",
+        roleDashboards[role] || "/dashboard",
         request.url,
       );
       redirectUrl.searchParams.set(
@@ -96,9 +98,17 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(redirectUrl);
     }
 
+    if (pathname.startsWith("/payment") && role !== "tenant") {
+      const redirectUrl = new URL(
+        roleDashboards[role] || "/dashboard",
+        request.url,
+      );
+      return NextResponse.redirect(redirectUrl);
+    }
+
     // Root /dashboard path handling
     if (pathname === "/dashboard") {
-      const destination = roleDashboards[role || ""] || "/auth/login";
+      const destination = roleDashboards[role] || "/auth/login";
       return NextResponse.redirect(new URL(destination, request.url));
     }
   }

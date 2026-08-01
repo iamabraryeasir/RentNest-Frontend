@@ -1,5 +1,7 @@
 import { LogoIcon } from "@/components/logo";
+import { ArrowRight, Home, Key, Shield } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Find & List Rental Properties Easily",

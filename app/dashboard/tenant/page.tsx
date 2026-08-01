@@ -8,8 +8,14 @@ import {
   GitPullRequest,
   Home,
 } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { TenantRequestsTable } from "./_component/tenant-requests-table";
+
+export const metadata: Metadata = {
+  title: "Tenant Dashboard",
+  description: "Manage your rental applications, active rentals, and payments.",
+};
 
 export default async function TenantDashboardPage() {
   let requests = [];

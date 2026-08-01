@@ -1,6 +1,11 @@
-import Link from "next/link"
-import { LogoIcon } from "@/components/logo"
-import { Home, Key, Shield, ArrowRight } from "lucide-react"
+import { LogoIcon } from "@/components/logo";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Find & List Rental Properties Easily",
+  description:
+    "RentNest connects tenants and landlords seamlessly. Browse properties, manage rental requests, make secure payments.",
+};
 
 export default function HomePage() {
   return (

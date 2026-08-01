@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { apiFetch } from "@/lib/api-client";
 import { createPropertyAction } from "../../_actions/landlord";
 import { PropertyForm } from "../../_component/property-form";
+
+export const metadata: Metadata = {
+  title: "Create Property Listing",
+  description: "List a new rental property on RentNest.",
+};
 
 export default async function NewPropertyPage() {
   // Fetch categories from the backend (cached for 1 hour)

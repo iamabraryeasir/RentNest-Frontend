@@ -3,6 +3,15 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { DashboardShell } from "./_component/dashboard-shell";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: {
+    default: "Dashboard",
+    template: "%s | RentNest",
+  },
+};
+
 export const dynamic = "force-dynamic";
 
 const roleDashboards: Record<string, string> = {

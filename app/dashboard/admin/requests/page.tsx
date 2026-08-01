@@ -1,7 +1,13 @@
 import { apiFetch } from "@/lib/api-client";
 import { ArrowLeft, GitPullRequest } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { RequestsModerator } from "../_component/requests-moderator";
+
+export const metadata: Metadata = {
+  title: "All Rental Requests",
+  description: "Monitor and manage all rental applications across the system.",
+};
 
 export default async function AdminRequestsPage() {
   let requests = [];

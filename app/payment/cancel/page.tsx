@@ -5,6 +5,13 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Payment Canceled",
+  description: "Your checkout transaction was canceled.",
+};
+
 export const dynamic = "force-dynamic";
 
 export default async function PaymentCancelPage() {

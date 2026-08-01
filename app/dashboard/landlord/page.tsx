@@ -9,8 +9,14 @@ import {
   PlusCircle,
   TrendingUp,
 } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { MyListingsTable } from "./_component/my-listings-table";
+
+export const metadata: Metadata = {
+  title: "Landlord Dashboard",
+  description: "Manage property listings and tenant rental applications.",
+};
 
 export default async function LandlordDashboardPage() {
   // Fetch properties and requests in parallel

@@ -3,8 +3,14 @@ import { getAuthenticatedUserData } from "@/lib/auth";
 import { ArrowLeft, UserCheck } from "lucide-react";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ProfileForm } from "./_components/profile-form";
+
+export const metadata: Metadata = {
+  title: "Account Profile",
+  description: "View and update your personal account profile information.",
+};
 
 export default async function ProfilePage() {
   const cookieStore = await cookies();

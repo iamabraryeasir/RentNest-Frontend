@@ -1,7 +1,13 @@
 import { apiFetch } from "@/lib/api-client";
 import { ArrowLeft, Folder } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { CategoryManager } from "../_component/category-manager";
+
+export const metadata: Metadata = {
+  title: "Category Management",
+  description: "Manage property categories and taxonomy.",
+};
 
 export default async function AdminCategoriesPage() {
   let categories = [];

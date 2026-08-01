@@ -12,7 +12,13 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard",
+  description: "System metrics, user management, and listing moderation.",
+};
 
 export default async function AdminDashboardPage() {
   let users = [];

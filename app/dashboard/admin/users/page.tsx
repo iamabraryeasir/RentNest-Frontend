@@ -2,8 +2,14 @@ import { apiFetch } from "@/lib/api-client";
 import { getAuthenticatedUserData } from "@/lib/auth";
 import { ArrowLeft, Users } from "lucide-react";
 import { cookies } from "next/headers";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { UserManagementTable } from "./_components/user-management-table";
+
+export const metadata: Metadata = {
+  title: "User Management",
+  description: "Manage and moderate platform users.",
+};
 
 interface PageProps {
   searchParams: Promise<{

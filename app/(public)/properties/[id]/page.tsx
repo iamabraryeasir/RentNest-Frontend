@@ -18,9 +18,31 @@ import { notFound } from "next/navigation";
 import { PropertyReviews } from "../_components/property-reviews";
 import { RequestCTA } from "./_components/request-cta";
 
+import type { Metadata } from "next";
+
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  try {
+    const response = await apiFetch(`/api/properties/${id}`, { cache: "no-store" });
+    if (response.ok) {
+      const payload = await response.json();
+      const property = payload?.data;
+      if (property?.title) {
+        return {
+          title: property.title,
+          description: `${property.title} in ${property.area || ""}, ${property.city || ""}. Rent: ${property.rentAmount} BDT.`,
+        };
+      }
+    }
+  } catch (e) {}
+  return {
+    title: "Property Details",
+  };
+}
 
 export default async function PropertyDetailsPage({ params }: Props) {
   const { id } = await params;

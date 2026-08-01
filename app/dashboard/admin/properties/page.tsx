@@ -1,7 +1,13 @@
 import { apiFetch } from "@/lib/api-client";
 import { ArrowLeft, Home } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ListingsModerator } from "../_component/listings-moderator";
+
+export const metadata: Metadata = {
+  title: "Property Moderation",
+  description: "Review and moderate property listings across the platform.",
+};
 
 export default async function AdminPropertiesPage() {
   let properties = [];

@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { apiFetch } from "@/lib/api-client";
 import { RequestsTable } from "../_component/requests-table";
+
+export const metadata: Metadata = {
+  title: "Rental Applications",
+  description: "Review and respond to incoming tenant rental requests.",
+};
 
 export default async function LandlordRequestsPage() {
   // Fetch incoming rental requests from the backend API

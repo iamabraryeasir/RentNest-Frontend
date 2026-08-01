@@ -1,7 +1,13 @@
 import { fetchPaymentHistoryAction } from "@/app/dashboard/tenant/_actions/payments-extended";
 import { ArrowLeft, CreditCard, Receipt } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { PaymentsTable } from "./_components/payments-table";
+
+export const metadata: Metadata = {
+  title: "Payment History",
+  description: "View past rental payment receipts and transaction records.",
+};
 
 export default async function TenantPaymentHistoryPage() {
   let payments = [];

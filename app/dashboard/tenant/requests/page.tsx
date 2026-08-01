@@ -11,7 +11,13 @@ import {
   HelpCircle,
   MapPin,
 } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "My Rental Requests",
+  description: "View and track the status of your rental applications.",
+};
 
 export default async function TenantRequestsPage() {
   let requests = [];

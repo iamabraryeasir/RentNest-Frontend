@@ -1,8 +1,15 @@
 import { apiFetch } from "@/lib/api-client";
-import { Suspense } from "react";
+import type { Metadata } from "next";
 import { PropertyFilters } from "./_components/property-filters";
-import { PropertyListings } from "./_components/property-listings";
+import { Suspense } from "react";
 import { PropertyListingsSkeleton } from "./_components/property-listings-skeleton";
+import { PropertyListings } from "./_components/property-listings";
+
+export const metadata: Metadata = {
+  title: "Browse Properties",
+  description:
+    "Explore and filter rental properties by city, rent price, bedrooms, bathrooms, and category.",
+};
 
 interface PropertiesPageProps {
   searchParams: Promise<Record<string, string | undefined>>;

@@ -6,6 +6,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SuccessReviewButton } from "../_components/review-trigger-button";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Payment Successful",
+  description: "Your rental payment was processed successfully.",
+};
+
 export const dynamic = "force-dynamic";
 
 type Props = {

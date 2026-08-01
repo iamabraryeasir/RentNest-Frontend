@@ -28,16 +28,10 @@ export async function Navbar() {
             Browse Properties
           </Link>
           <Link
-            href="#"
+            href="/about"
             className="text-muted-foreground hover:text-foreground transition-colors"
           >
             About Us
-          </Link>
-          <Link
-            href="#"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Contact
           </Link>
         </nav>
 

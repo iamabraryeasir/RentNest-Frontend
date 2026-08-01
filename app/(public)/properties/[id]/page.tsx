@@ -15,7 +15,7 @@ import {
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PropertyReviews } from "./_components/property-reviews";
+import { PropertyReviews } from "../_components/property-reviews";
 import { RequestCTA } from "./_components/request-cta";
 
 type Props = {

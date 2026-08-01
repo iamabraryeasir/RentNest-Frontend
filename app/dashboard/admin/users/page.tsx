@@ -3,7 +3,6 @@ import { getAuthenticatedUserData } from "@/lib/auth";
 import { ArrowLeft, Users } from "lucide-react";
 import { cookies } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { UserManagementTable } from "./_components/user-management-table";
 
 interface PageProps {

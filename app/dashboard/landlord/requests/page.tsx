@@ -23,7 +23,9 @@ export default async function LandlordRequestsPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Incoming Requests
         </p>
-        <h1 className="mt-1.5 text-2xl font-black text-foreground">Manage rental requests</h1>
+        <h1 className="mt-1.5 text-2xl font-black text-foreground">
+          Manage rental requests
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Review incoming lease applications, and approve or reject them.
         </p>

@@ -1,6 +1,6 @@
 import { apiFetch } from "@/lib/api-client";
-import { PropertyForm } from "../../_component/property-form";
 import { createPropertyAction } from "../../_actions/landlord";
+import { PropertyForm } from "../../_component/property-form";
 
 export default async function NewPropertyPage() {
   // Fetch categories from the backend (cached for 1 hour)
@@ -14,7 +14,10 @@ export default async function NewPropertyPage() {
       categories = payload?.data || [];
     }
   } catch (error) {
-    console.error("Failed to load categories for new property listing form:", error);
+    console.error(
+      "Failed to load categories for new property listing form:",
+      error,
+    );
   }
 
   return (
@@ -23,7 +26,9 @@ export default async function NewPropertyPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           New Listing
         </p>
-        <h1 className="mt-1.5 text-2xl font-black text-foreground">Create a new listing</h1>
+        <h1 className="mt-1.5 text-2xl font-black text-foreground">
+          Create a new listing
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           List your property on RentNest to find verified tenants.
         </p>

@@ -1,10 +1,10 @@
+import { NextRequest, NextResponse } from "next/server";
 import {
   isTokenExpired,
   parseTokenRole,
   refreshTokenRequest,
   syncAuthCookies,
 } from "./lib/auth-helper";
-import { NextRequest, NextResponse } from "next/server";
 
 const roleDashboards: Record<string, string> = {
   tenant: "/dashboard/tenant",
@@ -122,11 +122,7 @@ export async function proxy(request: NextRequest) {
 
   // 3. Construct response and sync updated cookies
   if (refreshed && newAccessToken) {
-    return syncAuthCookies(
-      request,
-      newAccessToken,
-      newRefreshToken,
-    );
+    return syncAuthCookies(request, newAccessToken, newRefreshToken);
   }
 
   return NextResponse.next();

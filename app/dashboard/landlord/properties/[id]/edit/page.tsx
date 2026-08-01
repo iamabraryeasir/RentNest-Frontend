@@ -1,7 +1,7 @@
 import { apiFetch } from "@/lib/api-client";
 import { notFound } from "next/navigation";
-import { PropertyForm } from "../../../_component/property-form";
 import { updatePropertyAction } from "../../../_actions/landlord";
+import { PropertyForm } from "../../../_component/property-form";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -43,7 +43,9 @@ export default async function EditPropertyPage({ params }: Props) {
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Modify Listing
         </p>
-        <h1 className="mt-1.5 text-2xl font-black text-foreground">Edit listing details</h1>
+        <h1 className="mt-1.5 text-2xl font-black text-foreground">
+          Edit listing details
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Make updates to the listing details and save changes to apply them.
         </p>

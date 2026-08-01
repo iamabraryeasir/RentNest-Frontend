@@ -32,7 +32,7 @@ export default async function PropertiesPage({
       {/* Main Browse Section */}
       <div className="flex flex-col md:flex-row gap-8">
         {/* Filters Sidebar */}
-        <aside className="w-full md:w-64 shrink-0 rounded-2xl border border-border bg-card p-6 h-fit shadow-xs">
+        <aside className="w-full md:w-72 shrink-0 rounded-2xl border border-border bg-card p-5 h-fit shadow-xs">
           <PropertyFilters
             categories={categories}
             initialFilters={awaitedSearchParams}

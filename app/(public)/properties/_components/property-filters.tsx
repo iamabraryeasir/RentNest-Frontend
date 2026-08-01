@@ -6,7 +6,7 @@ import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { MapPin, RotateCcw, Search, SlidersHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { FormEvent, useEffect, useState, useTransition } from "react";
 
 interface Category {
   id: string;
@@ -50,7 +50,7 @@ export function PropertyFilters({
     setSortOrder(initialFilters.sortOrder || "");
   }, [initialFilters]);
 
-  const handleApplyFilters = (e: React.FormEvent) => {
+  const handleApplyFilters = (e: FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
 
@@ -90,9 +90,6 @@ export function PropertyFilters({
       router.push("/properties");
     });
   };
-
-  const bedOptions = ["1", "2", "3", "4+"];
-  const bathOptions = ["1", "2", "3", "4+"];
 
   return (
     <form onSubmit={handleApplyFilters} className="w-full space-y-6">
@@ -197,30 +194,26 @@ export function PropertyFilters({
         <label className="text-xs font-bold text-foreground uppercase tracking-wider block">
           Bedrooms
         </label>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <Button
             type="button"
             variant={bedrooms === "" ? "default" : "outline"}
             size="sm"
             disabled={isPending}
             onClick={() => setBedrooms("")}
-            className="flex-1 cursor-pointer rounded-lg text-xs"
+            className="w-20 shrink-0 cursor-pointer rounded-lg text-xs"
           >
             Any
           </Button>
-          {bedOptions.map((opt) => (
-            <Button
-              key={opt}
-              type="button"
-              variant={bedrooms === opt ? "default" : "outline"}
-              size="sm"
-              disabled={isPending}
-              onClick={() => setBedrooms(opt)}
-              className="flex-1 cursor-pointer rounded-lg text-xs"
-            >
-              {opt}
-            </Button>
-          ))}
+          <Input
+            type="number"
+            min="1"
+            placeholder="e.g. 3"
+            value={bedrooms}
+            disabled={isPending}
+            onChange={(e) => setBedrooms(e.target.value)}
+            className="flex-1 text-xs rounded-lg"
+          />
         </div>
       </div>
 
@@ -229,30 +222,26 @@ export function PropertyFilters({
         <label className="text-xs font-bold text-foreground uppercase tracking-wider block">
           Bathrooms
         </label>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <Button
             type="button"
             variant={bathrooms === "" ? "default" : "outline"}
             size="sm"
             disabled={isPending}
             onClick={() => setBathrooms("")}
-            className="flex-1 cursor-pointer rounded-lg text-xs"
+            className="w-20 shrink-0 cursor-pointer rounded-lg text-xs"
           >
             Any
           </Button>
-          {bathOptions.map((opt) => (
-            <Button
-              key={opt}
-              type="button"
-              variant={bathrooms === opt ? "default" : "outline"}
-              size="sm"
-              disabled={isPending}
-              onClick={() => setBathrooms(opt)}
-              className="flex-1 cursor-pointer rounded-lg text-xs"
-            >
-              {opt}
-            </Button>
-          ))}
+          <Input
+            type="number"
+            min="1"
+            placeholder="e.g. 2"
+            value={bathrooms}
+            disabled={isPending}
+            onChange={(e) => setBathrooms(e.target.value)}
+            className="flex-1 text-xs rounded-lg"
+          />
         </div>
       </div>
 

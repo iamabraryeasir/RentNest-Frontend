@@ -1,275 +1,636 @@
-# API Integration Guide for RentNest
+# RentNest API Documentation
 
-This document is intended for future frontend and AI-assisted development work. It summarizes the backend API contract, authentication flow, endpoint behavior, and integration expectations so agents can work effectively without needing to inspect the backend code repeatedly.
+## Metadata
 
----
+- api_name: RentNest API
+- base_url: {{base_url}}
+- api_prefix: /api
+- auth_scheme: JWT
+- token_model:
+  - access_token: required for authenticated requests
+  - refresh_token: stored in HttpOnly cookie
 
-## 1. Backend Overview
+## Roles
 
-The backend service powers the RentNest real-estate rental platform with the following capabilities:
-
-- User authentication and authorization
-- Property management for landlords
-- Rental request workflow for tenants and landlords
-- Stripe-based checkout and payment webhooks
-- Review and rating system
-- Admin controls for moderation and platform management
-
-### Base API URL
-
-- Local development: http://localhost:5000
-- Production: https://rent-nest-backend-mu.vercel.app
-
-### API Prefix
-
-All routes are prefixed with:
-
-- /api
-
----
-
-## 2. Authentication Model
-
-The backend uses JWT-based authentication with two token types:
-
-- Access token: used for authenticated requests
-- Refresh token: stored in an HttpOnly cookie
-
-### Important Notes
-
-- Access token should be sent in the request body or headers depending on the backend implementation.
-- Refresh token should never be exposed to the frontend JavaScript runtime.
-- Logout should clear the refresh cookie and invalidate the session.
-
-### Auth Endpoints
-
-| Method | Endpoint | Access | Purpose |
-| --- | --- | --- | --- |
-| POST | /api/auth/register | Public | Register a tenant or landlord |
-| POST | /api/auth/login | Public | Login and receive auth tokens |
-| POST | /api/auth/refresh-token | Public | Refresh access token using refresh cookie |
-| GET | /api/auth/me | Authenticated | Get current authenticated user |
-| POST | /api/auth/logout | Authenticated | Logout and clear session |
-
-### Suggested Frontend Handling
-
-- Store the access token in memory or a secure client-side storage strategy.
-- Do not rely on storing the refresh token in localStorage.
-- On app startup, attempt to restore auth state by calling /api/auth/me or /api/auth/refresh-token if needed.
-
----
-
-## 3. Core Resources
-
-### 3.1 Users
-
-Base path: /api/users
-
-| Method | Endpoint | Access | Purpose |
-| --- | --- | --- | --- |
-| PATCH | /api/users/profile | Authenticated | Update current user profile |
-| GET | /api/users | ADMIN | Get all users |
-| GET | /api/users/:id | ADMIN | Get a single user |
-| PATCH | /api/users/:id/status | ADMIN | Activate or block a user |
-| DELETE | /api/users/:id | ADMIN | Delete a user |
-
-### 3.2 Categories
-
-Base path: /api/categories
-
-| Method | Endpoint | Access | Purpose |
-| --- | --- | --- | --- |
-| GET | /api/categories | Public | List all categories |
-| POST | /api/categories | ADMIN | Create a category |
-| PATCH | /api/categories/:id | ADMIN | Update a category |
-| DELETE | /api/categories/:id | ADMIN | Delete a category |
-
-### 3.3 Properties
-
-Base path: /api/properties
-
-| Method | Endpoint | Access | Purpose |
-| --- | --- | --- | --- |
-| GET | /api/properties | Public | List properties with filters, search, sorting |
-| GET | /api/properties/my-properties | LANDLORD | List landlord-owned properties |
-| GET | /api/properties/:id | Public | Get property details |
-| POST | /api/properties | LANDLORD | Create a property |
-| PATCH | /api/properties/:id | LANDLORD | Update a property |
-| PATCH | /api/properties/:id/status | LANDLORD | Change property status |
-| DELETE | /api/properties/:id | LANDLORD | Delete a property |
-
-### Common Property Filters
-
-The listing endpoint supports query parameters such as:
-
-- page
-- limit
-- search
-- sortBy
-- sortOrder
-- city
-- categoryId
-
-Example:
-
-- /api/properties?page=1&limit=10
-- /api/properties?search=apartment&city=Dhaka
-- /api/properties?sortBy=rentAmount&sortOrder=desc
-
-### 3.4 Rental Requests
-
-Base path: /api/rentals
-
-| Method | Endpoint | Access | Purpose |
-| --- | --- | --- | --- |
-| POST | /api/rentals | TENANT | Submit a rental request |
-| GET | /api/rentals | ADMIN | View all rental requests |
-| GET | /api/rentals/my-requests | TENANT | View tenant’s own requests |
-| GET | /api/rentals/incoming | LANDLORD | View requests for landlord properties |
-| GET | /api/rentals/:id | ADMIN, TENANT | Get a specific request |
-| PATCH | /api/rentals/:id/status | ADMIN, LANDLORD | Approve or reject a request |
-
-### Rental Flow
-
-1. Tenant submits a rental request.
-2. Landlord approves or rejects it.
-3. Once approved, the request can proceed to payment.
-4. After successful payment, the rental status becomes active.
-
-### 3.5 Reviews
-
-Base path: /api/reviews
-
-| Method | Endpoint | Access | Purpose |
-| --- | --- | --- | --- |
-| POST | /api/reviews | TENANT | Submit a property review |
-| GET | /api/reviews/property/:propertyId | Public | Get all reviews for a property |
-| PATCH | /api/reviews/:id | TENANT | Update a review |
-| DELETE | /api/reviews/:id | TENANT, ADMIN | Delete a review |
-
-### 3.6 Payments
-
-Base path: /api/payments
-
-| Method | Endpoint | Access | Purpose |
-| --- | --- | --- | --- |
-| POST | /api/payments/checkout-session | TENANT | Create Stripe checkout session |
-| GET | /api/payments/history | TENANT | Get payment/payment history |
-| GET | /api/payments/:id | ADMIN, TENANT, LANDLORD | Get payment details |
-| POST | /api/payments/webhook | Public | Stripe webhook endpoint |
-
----
-
-## 4. Data & Status Expectations
-
-### User Roles
-
-The backend expects these role values:
-
+- Public
 - TENANT
 - LANDLORD
 - ADMIN
+- Stripe Webhook
 
-### Property Statuses
+## Status Values
 
-Possible property status values include:
+- user_status: ACTIVE | BLOCKED
+- property_status: AVAILABLE | RENTED | UNAVAILABLE
+- rental_status: PENDING | APPROVED | REJECTED | ACTIVE
+- payment_status: PENDING | PAID | FAILED
 
-- AVAILABLE
-- RENTED
-- UNAVAILABLE
+## Endpoint Index
 
-### Rental Request Statuses
+### Auth
 
-Typical flow:
+- POST /api/auth/register — Public — Registers a new user account as TENANT or LANDLORD.
+- POST /api/auth/login — Public — Authenticates a user and returns tokens.
+- POST /api/auth/refresh-token — Public — Refreshes expired authentication tokens.
+- GET /api/auth/me — Authenticated — Fetches current user profile.
+- POST /api/auth/logout — Authenticated — Logs out the authenticated user.
 
-- PENDING
-- APPROVED
-- REJECTED
-- ACTIVE
+### Users
 
-### Payment Statuses
+- PATCH /api/users/profile — Authenticated — Updates current user profile.
+- GET /api/users — Restricted — Retrieves paginated list of all users.
+- GET /api/users/:id — Restricted — Retrieves a single user by ID.
+- PATCH /api/users/:id/status — Restricted — Updates user account status.
+- DELETE /api/users/:id — Restricted — Deletes a user by ID.
 
-Typical payment states:
+### Categories
 
-- PENDING
-- PAID
-- FAILED
+- POST /api/categories — Restricted — Creates a new category.
+- GET /api/categories — Public — Retrieves all categories.
+- PATCH /api/categories/:id — Restricted — Updates a category.
+- DELETE /api/categories/:id — Restricted — Deletes a category.
 
----
+### Properties
 
-## 5. Recommended Frontend Integration Patterns
+- GET /api/properties — Public — Fetches paginated, filterable properties.
+- GET /api/properties/:id — Public — Retrieves property details by ID.
+- POST /api/properties — Restricted — Creates a new property listing.
+- GET /api/properties/my-properties — Restricted — Retrieves landlord-owned properties.
+- PATCH /api/properties/:id — Restricted — Updates a property listing.
+- PATCH /api/properties/:id/status — Restricted — Updates property status.
+- DELETE /api/properties/:id — Restricted — Deletes a property listing.
 
-### API Communication Rules
+### Rentals
 
-- Use JSON request bodies for POST/PATCH requests.
-- Expect JSON responses unless otherwise noted.
-- Handle errors via the backend’s error payloads and show user-friendly messages.
-- Use pagination-aware UI components for listing endpoints.
+- POST /api/rentals — Restricted — Creates a rental request.
+- GET /api/rentals/my-requests — Restricted — Fetches tenant-owned rental requests.
+- GET /api/rentals/:id — Restricted — Fetches a specific rental request.
+- GET /api/rentals/incoming — Restricted — Fetches incoming rental requests for a landlord.
+- PATCH /api/rentals/:id/status — Restricted — Approves or rejects a rental request.
+- GET /api/rentals — Restricted — Retrieves all rental requests across the system.
 
-### Authentication Handling
+### Reviews
 
-- Keep the user session state in a centralized auth layer.
-- Refresh expired tokens silently when possible.
-- Ensure protected routes redirect unauthenticated users.
+- POST /api/reviews — Restricted — Submits a review for a property.
+- GET /api/reviews/property/:propertyId — Public — Gets all reviews for a property.
+- PATCH /api/reviews/:id — Restricted — Updates an existing review.
+- DELETE /api/reviews/:id — Restricted — Deletes a review by ID.
 
-### File Upload / Media Notes
+### Payments (Stripe)
 
-Properties support multiple images. If the frontend uses multipart uploads, the backend contract should be checked before implementation. The README indicates multi-image support, but the precise upload mechanism should be validated from the backend implementation.
+- POST /api/payments/checkout-session — Restricted — Generates a Stripe checkout session.
+- POST /api/payments/webhook — System — Processes Stripe webhook events.
+- GET /api/payments/history — Restricted — Fetches payment history for the authenticated tenant.
+- GET /api/payments/:id — Restricted — Fetches payment details by ID.
 
----
+## Endpoint Details
 
-## 6. Environment Variables (Backend)
+### Auth
 
-The backend expects the following environment variables:
+#### POST /api/auth/register
 
-```env
-PORT=5000
-NODE_ENV=development
-FRONTEND_URL=http://localhost:3000
-DATABASE_URL="postgresql://postgres:rentnest123@localhost:5432/rentnest?schema=public"
-BCRYPT_SALT_ROUNDS=10
-JWT_ACCESS_SECRET="super-secret-jwt-access-signature-token-key-2026"
-JWT_ACCESS_EXPIRES_IN="1d"
-JWT_REFRESH_SECRET="super-secret-jwt-refresh-signature-token-key-2026"
-JWT_REFRESH_EXPIRES_IN="7d"
-STRIPE_SECRET_KEY="sk_test_..."
-STRIPE_WEBHOOK_SECRET="whsec_..."
-```
+- category: Auth
+- method: POST
+- path: /api/auth/register
+- access: Public
+- roles: [Public]
+- path_params: []
+- query_params: []
+- body:
+  - name: string
+  - email: string
+  - password: string
+  - role: TENANT | LANDLORD
+- description: Registers a new user account as either TENANT or LANDLORD.
 
----
+#### POST /api/auth/login
 
-## 7. Local Development Notes
+- category: Auth
+- method: POST
+- path: /api/auth/login
+- access: Public
+- roles: [Public]
+- path_params: []
+- query_params: []
+- body:
+  - email: string
+  - password: string
+- description: Authenticates a user and returns authorization tokens.
 
-### Start Backend Locally
+#### POST /api/auth/refresh-token
 
-```bash
-npm install
-npx prisma db push
-npx prisma generate
-npm run dev
-```
+- category: Auth
+- method: POST
+- path: /api/auth/refresh-token
+- access: Public
+- roles: [Public]
+- path_params: []
+- query_params: []
+- body: null
+- description: Refreshes expired authentication tokens.
 
-### Stripe Webhook Testing
+#### GET /api/auth/me
 
-For local Stripe testing:
+- category: Auth
+- method: GET
+- path: /api/auth/me
+- access: Authenticated
+- roles: [TENANT, LANDLORD, ADMIN]
+- path_params: []
+- query_params: []
+- body: null
+- description: Fetches profile information of the currently authenticated user.
 
-```bash
-stripe login
-stripe listen --forward-to localhost:5000/api/payments/webhook
-```
+#### POST /api/auth/logout
 
-Use the generated webhook secret in the backend environment variables.
+- category: Auth
+- method: POST
+- path: /api/auth/logout
+- access: Authenticated
+- roles: [TENANT, LANDLORD, ADMIN]
+- path_params: []
+- query_params: []
+- body: null
+- description: Logs out the authenticated user and invalidates session tokens.
 
----
+### Users
 
-## 8. Summary for Agents
+#### PATCH /api/users/profile
 
-When integrating with this API:
+- category: Users
+- method: PATCH
+- path: /api/users/profile
+- access: Authenticated
+- roles: [TENANT, LANDLORD, ADMIN]
+- path_params: []
+- query_params: []
+- body:
+  - name: string (optional)
+  - email: string (optional)
+- description: Updates profile information of the authenticated user.
 
-- Assume all routes are under /api.
-- Prefer the role-based auth flow and treat admin-only routes as restricted.
-- Use the property, rental, and payment endpoints as the core business flow.
-- For rental requests, expect a multi-step workflow that includes approval and payment completion.
-- Treat Stripe as part of the checkout and payment lifecycle, not a simple one-off payment endpoint.
+#### GET /api/users
 
-This guide should be used as the primary reference for frontend integration and agent-assisted development work.
+- category: Users
+- method: GET
+- path: /api/users
+- access: Restricted
+- roles: [ADMIN]
+- path_params: []
+- query_params:
+  - page (number)
+  - limit (number)
+  - search (string)
+  - role (string)
+  - status (ACTIVE | BLOCKED)
+  - sortBy (string)
+  - sortOrder (asc | desc)
+- body: null
+- description: Retrieves a paginated list of all system users.
+
+#### GET /api/users/:id
+
+- category: Users
+- method: GET
+- path: /api/users/:id
+- access: Restricted
+- roles: [ADMIN]
+- path_params:
+  - id: UUID string
+- query_params: []
+- body: null
+- description: Retrieves detailed information of a single user by ID.
+
+#### PATCH /api/users/:id/status
+
+- category: Users
+- method: PATCH
+- path: /api/users/:id/status
+- access: Restricted
+- roles: [ADMIN]
+- path_params:
+  - id: UUID string
+- query_params: []
+- body:
+  - status: ACTIVE | BLOCKED
+- description: Updates account status (ACTIVE or BLOCKED) for a user.
+
+#### DELETE /api/users/:id
+
+- category: Users
+- method: DELETE
+- path: /api/users/:id
+- access: Restricted
+- roles: [ADMIN]
+- path_params:
+  - id: UUID string
+- query_params: []
+- body: null
+- description: Deletes a specific user by ID.
+
+### Categories
+
+#### POST /api/categories
+
+- category: Categories
+- method: POST
+- path: /api/categories
+- access: Restricted
+- roles: [ADMIN]
+- path_params: []
+- query_params: []
+- body:
+  - name: string
+  - slug: string
+- description: Creates a new property category.
+
+#### GET /api/categories
+
+- category: Categories
+- method: GET
+- path: /api/categories
+- access: Public
+- roles: [Public]
+- path_params: []
+- query_params: []
+- body: null
+- description: Retrieves all property categories.
+
+#### PATCH /api/categories/:id
+
+- category: Categories
+- method: PATCH
+- path: /api/categories/:id
+- access: Restricted
+- roles: [ADMIN]
+- path_params:
+  - id: UUID string
+- query_params: []
+- body:
+  - name: string (optional)
+  - slug: string (optional)
+- description: Updates an existing category by ID.
+
+#### DELETE /api/categories/:id
+
+- category: Categories
+- method: DELETE
+- path: /api/categories/:id
+- access: Restricted
+- roles: [ADMIN]
+- path_params:
+  - id: UUID string
+- query_params: []
+- body: null
+- description: Deletes a category by ID.
+
+### Properties
+
+#### GET /api/properties
+
+- category: Properties
+- method: GET
+- path: /api/properties
+- access: Public
+- roles: [Public]
+- path_params: []
+- query_params:
+  - page (number)
+  - limit (number)
+  - search (string)
+  - city (string)
+  - categoryId (UUID string)
+  - minPrice (number)
+  - maxPrice (number)
+  - bedrooms (number)
+  - bathrooms (number)
+  - status (AVAILABLE | RENTED | UNAVAILABLE)
+  - sortBy (string)
+  - sortOrder (asc | desc)
+- body: null
+- description: Fetches a paginated, filterable list of properties.
+
+#### GET /api/properties/:id
+
+- category: Properties
+- method: GET
+- path: /api/properties/:id
+- access: Public
+- roles: [Public]
+- path_params:
+  - id: UUID string
+- query_params: []
+- body: null
+- description: Retrieves single property details by ID.
+
+#### POST /api/properties
+
+- category: Properties
+- method: POST
+- path: /api/properties
+- access: Restricted
+- roles: [LANDLORD]
+- path_params: []
+- query_params: []
+- body:
+  - title: string
+  - description: string
+  - address: string
+  - city: string
+  - area: string
+  - postalCode: string
+  - rentAmount: number
+  - bedrooms: number
+  - bathrooms: number
+  - propertySize: number
+  - amenities: array of strings
+  - categoryId: UUID string
+- description: Creates a new property listing.
+
+#### GET /api/properties/my-properties
+
+- category: Properties
+- method: GET
+- path: /api/properties/my-properties
+- access: Restricted
+- roles: [LANDLORD]
+- path_params: []
+- query_params:
+  - page (number)
+  - limit (number)
+  - status (string)
+  - search (string)
+  - sortBy (string)
+  - sortOrder (asc | desc)
+- body: null
+- description: Retrieves all properties owned by the authenticated Landlord.
+
+#### PATCH /api/properties/:id
+
+- category: Properties
+- method: PATCH
+- path: /api/properties/:id
+- access: Restricted
+- roles: [LANDLORD]
+- path_params:
+  - id: UUID string
+- query_params: []
+- body:
+  - title: string (optional)
+  - description: string (optional)
+  - address: string (optional)
+  - city: string (optional)
+  - area: string (optional)
+  - postalCode: string (optional)
+  - rentAmount: number (optional)
+  - bedrooms: number (optional)
+  - bathrooms: number (optional)
+  - propertySize: number (optional)
+  - amenities: array of strings (optional)
+  - categoryId: UUID string (optional)
+- description: Updates an existing property listing.
+
+#### PATCH /api/properties/:id/status
+
+- category: Properties
+- method: PATCH
+- path: /api/properties/:id/status
+- access: Restricted
+- roles: [LANDLORD]
+- path_params:
+  - id: UUID string
+- query_params: []
+- body:
+  - status: AVAILABLE | RENTED | UNAVAILABLE
+- description: Updates property status.
+
+#### DELETE /api/properties/:id
+
+- category: Properties
+- method: DELETE
+- path: /api/properties/:id
+- access: Restricted
+- roles: [LANDLORD]
+- path_params:
+  - id: UUID string
+- query_params: []
+- body: null
+- description: Deletes a property listing by ID.
+
+### Rentals
+
+#### POST /api/rentals
+
+- category: Rentals
+- method: POST
+- path: /api/rentals
+- access: Restricted
+- roles: [TENANT]
+- path_params: []
+- query_params: []
+- body:
+  - propertyId: UUID string
+  - requestedMoveIn: ISO 8601 DateTime string
+  - message: string
+- description: Creates a rental request for a property.
+
+#### GET /api/rentals/my-requests
+
+- category: Rentals
+- method: GET
+- path: /api/rentals/my-requests
+- access: Restricted
+- roles: [TENANT]
+- path_params: []
+- query_params:
+  - page (number)
+  - limit (number)
+  - status (string)
+  - sortBy (string)
+  - sortOrder (asc | desc)
+- body: null
+- description: Fetches rental requests submitted by the authenticated Tenant.
+
+#### GET /api/rentals/:id
+
+- category: Rentals
+- method: GET
+- path: /api/rentals/:id
+- access: Restricted
+- roles: [TENANT]
+- path_params:
+  - id: UUID string
+- query_params: []
+- body: null
+- description: Fetches details of a specific rental request.
+
+#### GET /api/rentals/incoming
+
+- category: Rentals
+- method: GET
+- path: /api/rentals/incoming
+- access: Restricted
+- roles: [LANDLORD]
+- path_params: []
+- query_params:
+  - page (number)
+  - limit (number)
+  - status (string)
+  - propertyId (UUID string)
+  - sortBy (string)
+  - sortOrder (asc | desc)
+- body: null
+- description: Fetches incoming rental requests submitted for Landlord's properties.
+
+#### PATCH /api/rentals/:id/status
+
+- category: Rentals
+- method: PATCH
+- path: /api/rentals/:id/status
+- access: Restricted
+- roles: [LANDLORD]
+- path_params:
+  - id: UUID string
+- query_params: []
+- body:
+  - status: APPROVED | REJECTED
+- description: Approves or rejects a tenant's rental request.
+
+#### GET /api/rentals
+
+- category: Rentals
+- method: GET
+- path: /api/rentals
+- access: Restricted
+- roles: [ADMIN]
+- path_params: []
+- query_params:
+  - page (number)
+  - limit (number)
+  - status (string)
+  - tenantId (UUID string)
+  - landlordId (UUID string)
+  - propertyId (UUID string)
+  - sortBy (string)
+  - sortOrder (asc | desc)
+- body: null
+- description: Retrieves all rental requests across the entire system.
+
+### Reviews
+
+#### POST /api/reviews
+
+- category: Reviews
+- method: POST
+- path: /api/reviews
+- access: Restricted
+- roles: [TENANT]
+- path_params: []
+- query_params: []
+- body:
+  - propertyId: UUID string
+  - rating: number (1-5)
+  - comment: string
+- description: Submits a review and rating for a property.
+
+#### GET /api/reviews/property/:propertyId
+
+- category: Reviews
+- method: GET
+- path: /api/reviews/property/:propertyId
+- access: Public
+- roles: [Public]
+- path_params:
+  - propertyId: UUID string
+- query_params:
+  - page (number)
+  - limit (number)
+  - sortBy (string)
+  - sortOrder (asc | desc)
+- body: null
+- description: Gets all reviews for a specific property.
+
+#### PATCH /api/reviews/:id
+
+- category: Reviews
+- method: PATCH
+- path: /api/reviews/:id
+- access: Restricted
+- roles: [TENANT]
+- path_params:
+  - id: UUID string
+- query_params: []
+- body:
+  - rating: number (optional)
+  - comment: string (optional)
+- description: Updates an existing review.
+
+#### DELETE /api/reviews/:id
+
+- category: Reviews
+- method: DELETE
+- path: /api/reviews/:id
+- access: Restricted
+- roles: [TENANT]
+- path_params:
+  - id: UUID string
+- query_params: []
+- body: null
+- description: Deletes a review by ID.
+
+### Payments (Stripe)
+
+#### POST /api/payments/checkout-session
+
+- category: Payments (Stripe)
+- method: POST
+- path: /api/payments/checkout-session
+- access: Restricted
+- roles: [TENANT]
+- path_params: []
+- query_params: []
+- body:
+  - rentalRequestId: UUID string
+- description: Generates a Stripe checkout session for an approved rental request.
+
+#### POST /api/payments/webhook
+
+- category: Payments (Stripe)
+- method: POST
+- path: /api/payments/webhook
+- access: System
+- roles: [Stripe Webhook]
+- path_params: []
+- query_params: []
+- body: Raw Stripe Webhook Payload
+- description: Webhook endpoint to process Stripe payment events.
+
+#### GET /api/payments/history
+
+- category: Payments (Stripe)
+- method: GET
+- path: /api/payments/history
+- access: Restricted
+- roles: [TENANT]
+- path_params: []
+- query_params:
+  - page (number)
+  - limit (number)
+  - status (string)
+  - sortBy (string)
+  - sortOrder (asc | desc)
+- body: null
+- description: Fetches payment history for the authenticated Tenant.
+
+#### GET /api/payments/:id
+
+- category: Payments (Stripe)
+- method: GET
+- path: /api/payments/:id
+- access: Restricted
+- roles: [TENANT]
+- path_params:
+  - id: UUID string
+- query_params: []
+- body: null
+- description: Fetches details of a specific payment transaction.

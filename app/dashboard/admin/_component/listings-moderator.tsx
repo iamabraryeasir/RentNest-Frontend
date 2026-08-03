@@ -2,8 +2,9 @@
 
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { Input } from "@/components/ui/input";
-import { ExternalLink, Home, Loader2, Trash2 } from "lucide-react";
+import { ExternalLink, Home, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import toast from "react-hot-toast";
@@ -18,20 +19,15 @@ interface ListingsModeratorProps {
 export function ListingsModerator({ properties }: ListingsModeratorProps) {
   const [isPending, startTransition] = useTransition();
   const [searchTerm, setSearchTerm] = useState("");
+  const [deleteConfirmProperty, setDeleteConfirmProperty] =
+    useState<Property | null>(null);
 
-  const handleDelete = async (id: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this listing? This action is permanent and cannot be undone.",
-      )
-    ) {
-      return;
-    }
-
+  const handleDelete = async (property: Property) => {
     startTransition(async () => {
-      const result = await deletePropertyAction(id);
+      const result = await deletePropertyAction(property.id);
       if (result.success) {
         toast.success(result.message);
+        setDeleteConfirmProperty(null);
       } else {
         toast.error(result.message);
       }
@@ -135,7 +131,9 @@ export function ListingsModerator({ properties }: ListingsModeratorProps) {
                         <div>
                           {prop.bedrooms ?? 0} Bed • {prop.bathrooms ?? 0} Bath
                         </div>
-                        <div className="mt-0.5">{prop.propertySize ?? 0} sqft</div>
+                        <div className="mt-0.5">
+                          {prop.propertySize ?? 0} sqft
+                        </div>
                       </td>
                       <td className="px-6 py-4 font-bold text-foreground">
                         ${formattedRent}
@@ -161,15 +159,11 @@ export function ListingsModerator({ properties }: ListingsModeratorProps) {
                           <Button
                             size="icon"
                             variant="outline"
-                            onClick={() => handleDelete(prop.id)}
+                            onClick={() => setDeleteConfirmProperty(prop)}
                             disabled={isPending}
                             className="size-8 rounded-lg cursor-pointer text-red-500 hover:text-red-600 hover:bg-red-50"
                           >
-                            {isPending ? (
-                              <Loader2 className="size-3.5 animate-spin" />
-                            ) : (
-                              <Trash2 className="size-3.5" />
-                            )}
+                            <Trash2 className="size-3.5" />
                           </Button>
                         </div>
                       </td>
@@ -181,6 +175,25 @@ export function ListingsModerator({ properties }: ListingsModeratorProps) {
           </div>
         </div>
       )}
+
+      <ConfirmationModal
+        isOpen={!!deleteConfirmProperty}
+        onClose={() => setDeleteConfirmProperty(null)}
+        onConfirm={() => {
+          if (deleteConfirmProperty) {
+            handleDelete(deleteConfirmProperty);
+          }
+        }}
+        title="Delete Listing?"
+        description={
+          deleteConfirmProperty
+            ? `Are you sure you want to delete "${deleteConfirmProperty.title}"? This action is permanent and cannot be undone.`
+            : ""
+        }
+        confirmText="Delete Listing"
+        cancelText="Cancel"
+        isLoading={isPending}
+      />
     </div>
   );
 }

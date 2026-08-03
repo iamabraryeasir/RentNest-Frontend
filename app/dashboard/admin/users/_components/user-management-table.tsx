@@ -2,6 +2,7 @@
 
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import {
   ChevronLeft,
   ChevronRight,
@@ -56,6 +57,7 @@ export function UserManagementTable({
   const [isPending, startTransition] = useTransition();
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [deleteConfirmUser, setDeleteConfirmUser] = useState<User | null>(null);
 
   // General URL query synchronizer
   const updateQuery = (
@@ -81,8 +83,6 @@ export function UserManagementTable({
     });
   };
 
-  // Debouncing effect for search parameter
-
   const handleToggleStatus = async (id: string, currentStatus: string) => {
     if (id === currentUserId) {
       toast.error("You cannot block your own admin account.");
@@ -104,25 +104,18 @@ export function UserManagementTable({
     }
   };
 
-  const handleDeleteUser = async (id: string) => {
-    if (id === currentUserId) {
+  const handleDeleteUser = async (user: User) => {
+    if (user.id === currentUserId) {
       toast.error("You cannot delete your own admin account.");
       return;
     }
 
-    if (
-      !confirm(
-        "Are you sure you want to delete this user? This will also remove any related listings and bookings.",
-      )
-    ) {
-      return;
-    }
-
-    setLoadingId(id);
+    setLoadingId(user.id);
     try {
-      const result = await deleteUserAction(id);
+      const result = await deleteUserAction(user.id);
       if (result.success) {
         toast.success(result.message);
+        setDeleteConfirmUser(null);
       } else {
         toast.error(result.message);
       }
@@ -269,7 +262,7 @@ export function UserManagementTable({
                                 <Button
                                   size="icon"
                                   variant="outline"
-                                  onClick={() => handleDeleteUser(user.id)}
+                                  onClick={() => setDeleteConfirmUser(user)}
                                   disabled={isCurrent}
                                   className="size-8 rounded-lg cursor-pointer text-red-500 hover:text-red-600 hover:bg-red-50"
                                   title="Delete User Account"
@@ -326,6 +319,25 @@ export function UserManagementTable({
           onClose={() => setSelectedUserId(null)}
         />
       )}
+
+      <ConfirmationModal
+        isOpen={!!deleteConfirmUser}
+        onClose={() => setDeleteConfirmUser(null)}
+        onConfirm={() => {
+          if (deleteConfirmUser) {
+            handleDeleteUser(deleteConfirmUser);
+          }
+        }}
+        title="Delete User Account?"
+        description={
+          deleteConfirmUser
+            ? `Are you sure you want to delete user "${deleteConfirmUser.name || deleteConfirmUser.email}"? This will also remove any related listings and bookings.`
+            : ""
+        }
+        confirmText="Delete User"
+        cancelText="Cancel"
+        isLoading={loadingId === deleteConfirmUser?.id}
+      />
     </div>
   );
 }

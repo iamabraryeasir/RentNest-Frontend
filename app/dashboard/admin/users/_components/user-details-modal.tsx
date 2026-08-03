@@ -7,6 +7,7 @@ import {
 } from "@/app/dashboard/admin/users/_actions/user-actions";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import type { DashboardUser } from "@/types";
 import {
   Ban,
@@ -30,6 +31,7 @@ export function UserDetailsModal({ userId, onClose }: UserDetailsModalProps) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<DashboardUser | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   useEffect(() => {
     async function loadUser() {
@@ -61,17 +63,11 @@ export function UserDetailsModal({ userId, onClose }: UserDetailsModalProps) {
 
   const handleDelete = async () => {
     if (!user) return;
-    if (
-      !confirm(
-        `Are you sure you want to delete user ${user.name || user.email}?`,
-      )
-    ) {
-      return;
-    }
     setActionLoading(true);
     const res = await deleteUserAction(user.id);
     if (res.success) {
       toast.success(res.message);
+      setIsDeleteConfirmOpen(false);
       onClose();
     } else {
       toast.error(res.message);
@@ -221,21 +217,30 @@ export function UserDetailsModal({ userId, onClose }: UserDetailsModalProps) {
             </Button>
 
             <Button
-              onClick={handleDelete}
+              onClick={() => setIsDeleteConfirmOpen(true)}
               disabled={actionLoading}
               className="w-full cursor-pointer rounded-xl text-xs font-bold gap-2 py-5 bg-rose-600 hover:bg-rose-700 text-white"
             >
-              {actionLoading ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <>
-                  <Trash2 className="size-4" /> Delete User Permanently
-                </>
-              )}
+              <Trash2 className="size-4" /> Delete User Permanently
             </Button>
           </div>
         )}
       </div>
+
+      <ConfirmationModal
+        isOpen={isDeleteConfirmOpen}
+        onClose={() => setIsDeleteConfirmOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete User Permanently?"
+        description={
+          user
+            ? `Are you sure you want to delete user "${user.name || user.email}"? This action is permanent and cannot be undone.`
+            : ""
+        }
+        confirmText="Delete User"
+        cancelText="Cancel"
+        isLoading={actionLoading}
+      />
     </div>
   );
 }

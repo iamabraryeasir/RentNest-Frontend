@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { Input } from "@/components/ui/input";
 import { Check, Edit2, Folder, Loader2, Trash2, X } from "lucide-react";
 import { useState, useTransition } from "react";
@@ -21,6 +22,7 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
   const [isPending, startTransition] = useTransition();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
+  const [deleteConfirmCategory, setDeleteConfirmCategory] = useState<Category | null>(null);
 
   const handleUpdate = async (id: string) => {
     if (!editName.trim()) {
@@ -40,15 +42,12 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
     });
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this category?")) {
-      return;
-    }
-
+  const handleDelete = async (category: Category) => {
     startTransition(async () => {
-      const result = await deleteCategoryAction(id);
+      const result = await deleteCategoryAction(category.id);
       if (result.success) {
         toast.success(result.message);
+        setDeleteConfirmCategory(null);
       } else {
         toast.error(result.message);
       }
@@ -163,7 +162,7 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
                               <Button
                                 size="icon"
                                 variant="outline"
-                                onClick={() => handleDelete(cat.id)}
+                                onClick={() => setDeleteConfirmCategory(cat)}
                                 disabled={isPending}
                                 className="size-8 rounded-lg cursor-pointer text-red-500 hover:text-red-600 hover:bg-red-50"
                               >
@@ -181,6 +180,25 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
           </div>
         </div>
       )}
+
+      <ConfirmationModal
+        isOpen={!!deleteConfirmCategory}
+        onClose={() => setDeleteConfirmCategory(null)}
+        onConfirm={() => {
+          if (deleteConfirmCategory) {
+            handleDelete(deleteConfirmCategory);
+          }
+        }}
+        title="Delete Category?"
+        description={
+          deleteConfirmCategory
+            ? `Are you sure you want to delete "${deleteConfirmCategory.name}"? This action cannot be undone.`
+            : ""
+        }
+        confirmText="Delete"
+        cancelText="Cancel"
+        isLoading={isPending}
+      />
     </div>
   );
 }

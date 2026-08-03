@@ -6,6 +6,7 @@ import {
 } from "@/app/dashboard/landlord/_actions/landlord";
 import { Property } from "@/components/property-card";
 import { Button } from "@/components/ui/button";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { Edit, Home, Loader2, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -181,47 +182,20 @@ export function MyListingsTable({ properties }: MyListingsTableProps) {
         </table>
       </div>
 
-      {/* Custom Confirmation Modal */}
-      {deleteConfirmId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
-          <div
-            className="relative w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-2xl animate-in zoom-in-95 duration-200"
-            role="dialog"
-            aria-modal="true"
-          >
-            <div className="flex flex-col items-center text-center space-y-3.5">
-              <div className="rounded-full bg-rose-500/10 p-3.5 border border-rose-500/20 text-rose-600">
-                <Trash2 className="size-6" />
-              </div>
-              <div className="space-y-1.5">
-                <h3 className="font-bold text-foreground text-lg leading-tight">
-                  Delete Listing?
-                </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Are you sure you want to delete this listing? This action is
-                  permanent and cannot be undone.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-3 mt-6">
-              <Button
-                variant="outline"
-                onClick={() => setDeleteConfirmId(null)}
-                className="flex-1 cursor-pointer py-4.5 rounded-xl font-semibold text-sm hover:bg-muted"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => handleDelete(deleteConfirmId)}
-                className="flex-1 cursor-pointer py-4.5 rounded-xl font-bold text-sm bg-rose-600 hover:bg-rose-700 text-white border-none"
-              >
-                Delete
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmationModal
+        isOpen={!!deleteConfirmId}
+        onClose={() => setDeleteConfirmId(null)}
+        onConfirm={() => {
+          if (deleteConfirmId) {
+            handleDelete(deleteConfirmId);
+          }
+        }}
+        title="Delete Listing?"
+        description="Are you sure you want to delete this listing? This action is permanent and cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        isLoading={deletingId === deleteConfirmId}
+      />
     </>
   );
 }

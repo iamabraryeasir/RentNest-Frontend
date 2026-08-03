@@ -1,9 +1,7 @@
 "use client";
 
-import {
-  submitRentalRequestAction,
-  type RentalRequestState,
-} from "@/app/(public)/_actions/rentals";
+import { submitRentalRequestAction } from "@/app/(public)/_actions/rentals";
+import type { RentalRequestState } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,7 +16,7 @@ import toast from "react-hot-toast";
 interface RequestCTAProps {
   propertyId: string;
   propertyStatus: string;
-  rentAmount: string;
+  rentAmount: string | number;
   isAuthenticated: boolean;
   userRole?: string;
 }

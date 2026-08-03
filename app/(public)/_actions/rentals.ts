@@ -58,7 +58,10 @@ export async function submitRentalRequestAction(
     if (!response.ok) {
       return {
         success: false,
-        message: payload?.message || payload?.error || "Failed to submit rental request.",
+        message:
+          payload?.message ||
+          payload?.error ||
+          "Failed to submit rental request.",
       };
     }
 

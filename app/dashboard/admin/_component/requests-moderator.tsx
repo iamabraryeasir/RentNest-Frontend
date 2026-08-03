@@ -46,7 +46,7 @@ export function RequestsModerator({ requests }: RequestsModeratorProps) {
         req.property.title.toLowerCase().includes(search)) ||
       (req.tenant?.name && req.tenant.name.toLowerCase().includes(search)) ||
       (req.tenant?.email && req.tenant.email.toLowerCase().includes(search)) ||
-      req.status.toLowerCase().includes(search)
+      (req.status && req.status.toLowerCase().includes(search))
     );
   });
 
@@ -103,19 +103,22 @@ export function RequestsModerator({ requests }: RequestsModeratorProps) {
               </thead>
               <tbody className="divide-y divide-border/60 text-sm">
                 {filteredRequests.map((req) => {
-                  const status = req.status;
+                  const status = req.status || "PENDING";
                   const isLoading = loadingId === req.id && isPending;
                   const formattedRent = Number(
                     req.rentAmount || req.property?.rentAmount || 0,
                   ).toLocaleString();
 
-                  const moveInDateFormatted = new Date(
-                    req.requestedMoveIn,
-                  ).toLocaleDateString(undefined, {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  });
+                  const moveInDateFormatted = req.requestedMoveIn
+                    ? new Date(req.requestedMoveIn).toLocaleDateString(
+                        undefined,
+                        {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        },
+                      )
+                    : "N/A";
 
                   return (
                     <tr

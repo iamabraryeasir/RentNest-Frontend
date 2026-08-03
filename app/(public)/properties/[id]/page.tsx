@@ -1,5 +1,5 @@
 import { fetchPropertyReviewsAction } from "@/app/dashboard/tenant/_actions/reviews";
-import { Property } from "@/components/property-card";
+import type { Property } from "@/types";
 import { apiFetch } from "@/lib/api-client";
 import { getAuthenticatedUserData } from "@/lib/auth";
 import {

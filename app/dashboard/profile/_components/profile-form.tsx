@@ -1,11 +1,9 @@
 "use client";
 
-import {
-  updateProfileAction,
-  type ProfileState,
-} from "@/app/dashboard/_actions/profile-actions";
+import { updateProfileAction } from "@/app/dashboard/_actions/profile-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { ProfileState } from "@/types";
 import { Loader2, Mail, Save, User } from "lucide-react";
 import { useActionState, useEffect } from "react";
 import toast from "react-hot-toast";

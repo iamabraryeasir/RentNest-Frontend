@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  registerAction,
-  type RegisterState,
-} from "@/app/auth/_actions/register";
+import { registerAction } from "@/app/auth/_actions/register";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import type { RegisterState } from "@/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useRef, useState } from "react";

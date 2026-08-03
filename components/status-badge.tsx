@@ -1,7 +1,7 @@
 import type { DashboardStatus as StatusType } from "@/types";
 
 interface StatusBadgeProps {
-  status: StatusType | string;
+  status?: StatusType | string;
   className?: string;
 }
 
@@ -23,8 +23,12 @@ const statusStyles: Record<StatusType, string> = {
   COMPLETED: "bg-zinc-500/10 text-zinc-600 border-zinc-500/25",
 };
 
-export function StatusBadge({ status, className = "" }: StatusBadgeProps) {
-  const normalizedStatus = status.toUpperCase() as StatusType;
+export function StatusBadge({
+  status = "PENDING",
+  className = "",
+}: StatusBadgeProps) {
+  const safeStatus = status || "PENDING";
+  const normalizedStatus = safeStatus.toUpperCase() as StatusType;
   const styleClass =
     statusStyles[normalizedStatus] ||
     "bg-muted text-muted-foreground border-border";
@@ -33,7 +37,7 @@ export function StatusBadge({ status, className = "" }: StatusBadgeProps) {
     <span
       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border transition-colors ${styleClass} ${className}`}
     >
-      {status}
+      {safeStatus}
     </span>
   );
 }

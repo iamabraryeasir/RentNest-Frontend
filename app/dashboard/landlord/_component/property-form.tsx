@@ -1,9 +1,9 @@
 "use client";
 
-import type { CreatePropertyState } from "@/app/dashboard/landlord/_actions/landlord";
 import { Property } from "@/components/property-card";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
+import type { CreatePropertyState } from "@/types";
 import { Building, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect } from "react";

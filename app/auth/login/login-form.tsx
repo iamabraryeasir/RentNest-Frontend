@@ -1,6 +1,7 @@
 "use client";
 
-import { loginAction, type LoginState } from "@/app/auth/_actions/login";
+import { loginAction } from "@/app/auth/_actions/login";
+import type { LoginState } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {

@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import type { Property } from "@/types";
 import { Bath, Bed, MapPin, Maximize2, Tag } from "lucide-react";
 import Link from "next/link";
+export type { Property };
 
 interface PropertyCardProps {
   property: Property;

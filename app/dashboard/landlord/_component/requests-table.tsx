@@ -15,26 +15,7 @@ import {
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-export interface RentalRequest {
-  id: string;
-  propertyId: string;
-  tenantId: string;
-  requestedMoveIn: string;
-  message: string;
-  status: "PENDING" | "APPROVED" | "REJECTED" | "ACTIVE" | "COMPLETED";
-  rentAmount: string;
-  createdAt: string;
-  property?: {
-    id: string;
-    title: string;
-    rentAmount: string;
-  };
-  tenant?: {
-    id: string;
-    email: string;
-    name: string;
-  };
-}
+import type { DashboardRentalRequest as RentalRequest } from "@/types";
 
 interface RequestsTableProps {
   requests: RentalRequest[];
@@ -102,13 +83,13 @@ export function RequestsTable({ requests }: RequestsTableProps) {
               req.rentAmount || req.property?.rentAmount || 0,
             ).toLocaleString();
 
-            const moveInDateFormatted = new Date(
-              req.requestedMoveIn,
-            ).toLocaleDateString(undefined, {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            });
+            const moveInDateFormatted = req.requestedMoveIn
+              ? new Date(req.requestedMoveIn).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })
+              : "N/A";
 
             return (
               <tr key={req.id} className="hover:bg-muted/10 transition-colors">

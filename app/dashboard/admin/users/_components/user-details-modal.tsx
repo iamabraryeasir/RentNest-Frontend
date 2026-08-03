@@ -7,6 +7,7 @@ import {
 } from "@/app/dashboard/admin/users/_actions/user-actions";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
+import type { DashboardUser } from "@/types";
 import {
   Ban,
   CheckCircle2,
@@ -27,7 +28,7 @@ interface UserDetailsModalProps {
 
 export function UserDetailsModal({ userId, onClose }: UserDetailsModalProps) {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<DashboardUser | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
@@ -48,7 +49,7 @@ export function UserDetailsModal({ userId, onClose }: UserDetailsModalProps) {
     if (!user) return;
     setActionLoading(true);
     const nextStatus = user.status === "ACTIVE" ? "BLOCKED" : "ACTIVE";
-    const res = await toggleUserStatusAction(user.id, user.status);
+    const res = await toggleUserStatusAction(user.id, user.status ?? "ACTIVE");
     if (res.success) {
       toast.success(res.message);
       setUser({ ...user, status: nextStatus });
@@ -161,7 +162,7 @@ export function UserDetailsModal({ userId, onClose }: UserDetailsModalProps) {
                     <span className="text-muted-foreground font-medium">
                       User ID
                     </span>
-                    <span className="font-mono font-bold text-foreground truncate max-w-[180px]">
+                    <span className="font-mono font-bold text-foreground truncate max-w-45">
                       {user.id}
                     </span>
                   </div>

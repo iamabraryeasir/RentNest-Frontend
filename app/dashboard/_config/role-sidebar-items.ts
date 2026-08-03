@@ -1,5 +1,5 @@
+import type { SidebarItem } from "@/types";
 import {
-  CreditCard,
   Folder,
   GitPullRequest,
   Home,
@@ -9,13 +9,6 @@ import {
   UserCheck,
   Users,
 } from "lucide-react";
-import React from "react";
-
-export interface SidebarItem {
-  text: string;
-  path: string;
-  icon: React.ComponentType<any>;
-}
 
 export const roleSidebarItems: Record<string, SidebarItem[]> = {
   tenant: [

@@ -1,6 +1,7 @@
 "use client";
 
 import { logoutAction } from "@/app/auth/_actions/logout";
+import type { AuthenticatedUser } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,10 +14,7 @@ import Link from "next/link";
 import { useTransition } from "react";
 
 interface UserDropdownProps {
-  user: {
-    email?: string;
-    role?: string;
-  };
+  user: Pick<AuthenticatedUser, "email" | "role">;
 }
 
 export function UserDropdown({ user }: UserDropdownProps) {

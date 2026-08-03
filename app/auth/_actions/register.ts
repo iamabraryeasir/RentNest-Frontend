@@ -1,6 +1,7 @@
 "use server";
 
 import { getApiBaseUrl } from "@/lib/auth";
+import type { RegisterState } from "@/types";
 import { z } from "zod";
 
 const registerSchema = z.object({
@@ -11,17 +12,6 @@ const registerSchema = z.object({
     message: "Please select a type of account.",
   }),
 });
-
-export type RegisterState = {
-  success: boolean;
-  message: string;
-  errors?: {
-    name?: string[];
-    email?: string[];
-    password?: string[];
-    role?: string[];
-  };
-};
 
 export async function registerAction(
   _prevState: RegisterState | undefined,

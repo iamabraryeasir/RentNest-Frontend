@@ -7,28 +7,7 @@ import { GitPullRequest, Loader2 } from "lucide-react";
 import { useState, useTransition } from "react";
 import toast from "react-hot-toast";
 import { moderateRentalStatusAction } from "../_actions/admin-actions";
-
-export interface RentalRequest {
-  id: string;
-  propertyId: string;
-  tenantId: string;
-  requestedMoveIn: string;
-  message: string;
-  status: "PENDING" | "APPROVED" | "REJECTED" | "ACTIVE" | "COMPLETED";
-  rentAmount: string | number;
-  createdAt: string;
-  property?: {
-    id: string;
-    title: string;
-    rentAmount: string | number;
-    city: string;
-  };
-  tenant?: {
-    id: string;
-    email: string;
-    name: string;
-  };
-}
+import type { DashboardRentalRequest as RentalRequest } from "@/types";
 
 interface RequestsModeratorProps {
   requests: RentalRequest[];
@@ -52,7 +31,7 @@ export function RequestsModerator({ requests }: RequestsModeratorProps) {
         } else {
           toast.error(result.message);
         }
-      } catch (err) {
+      } catch {
         toast.error("Failed to update request status.");
       } finally {
         setLoadingId(null);
@@ -95,7 +74,7 @@ export function RequestsModerator({ requests }: RequestsModeratorProps) {
       </div>
 
       {filteredRequests.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/45 p-12 text-center h-[280px]">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/45 p-12 text-center h-70">
           <div className="rounded-full bg-muted p-4 mb-4">
             <GitPullRequest className="size-8 text-muted-foreground" />
           </div>
@@ -144,7 +123,7 @@ export function RequestsModerator({ requests }: RequestsModeratorProps) {
                       className="hover:bg-muted/10 transition-colors"
                     >
                       <td className="px-6 py-4">
-                        <div className="font-semibold text-foreground max-w-[200px] truncate">
+                        <div className="font-semibold text-foreground max-w-50 truncate">
                           {req.property?.title || "Property listing"}
                         </div>
                         <div className="text-xs text-muted-foreground mt-0.5">
@@ -168,7 +147,7 @@ export function RequestsModerator({ requests }: RequestsModeratorProps) {
                         </div>
                       </td>
                       <td
-                        className="px-6 py-4 text-xs text-muted-foreground max-w-[180px] truncate"
+                        className="px-6 py-4 text-xs text-muted-foreground max-w-45 truncate"
                         title={req.message}
                       >
                         {req.message || "—"}

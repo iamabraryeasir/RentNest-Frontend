@@ -1,6 +1,7 @@
 import { StatCard } from "@/components/stat-card";
 import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-client";
+import type { DashboardRentalRequest } from "@/types";
 import {
   ArrowRight,
   Building,
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export default async function TenantDashboardPage() {
-  let requests = [];
+  let requests: DashboardRentalRequest[] = [];
   try {
     const response = await apiFetch("/api/rentals/my-requests", {
       cache: "no-store",
@@ -32,9 +33,9 @@ export default async function TenantDashboardPage() {
   }
 
   // Calculate metrics
-  const activeRentals = requests.filter((r: any) => r.status === "ACTIVE");
-  const pendingPayments = requests.filter((r: any) => r.status === "APPROVED");
-  const pendingApprovals = requests.filter((r: any) => r.status === "PENDING");
+  const activeRentals = requests.filter((r) => r.status === "ACTIVE");
+  const pendingPayments = requests.filter((r) => r.status === "APPROVED");
+  const pendingApprovals = requests.filter((r) => r.status === "PENDING");
 
   return (
     <main className="mx-auto flex min-h-screen max-w-7xl flex-col gap-6">

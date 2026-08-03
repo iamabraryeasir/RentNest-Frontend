@@ -1,6 +1,13 @@
 import { StatCard } from "@/components/stat-card";
 import { StatusBadge } from "@/components/status-badge";
 import { apiFetch } from "@/lib/api-client";
+import type {
+  DashboardCategory,
+  DashboardMetrics,
+  DashboardProperty,
+  DashboardRentalRequest,
+  DashboardUser,
+} from "@/types";
 import {
   Activity,
   ArrowUpRight,
@@ -21,11 +28,11 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminDashboardPage() {
-  let users = [];
-  let properties = [];
-  let requests = [];
-  let categories = [];
-  let metrics = null;
+  let users: DashboardUser[] = [];
+  let properties: DashboardProperty[] = [];
+  let requests: DashboardRentalRequest[] = [];
+  let categories: DashboardCategory[] = [];
+  let metrics: DashboardMetrics | null = null;
 
   try {
     const res = await apiFetch("/api/admin/metrics");
@@ -87,32 +94,31 @@ export default async function AdminDashboardPage() {
   const totalUsers = metrics?.users?.total ?? users.length;
   const landlordsCount =
     metrics?.users?.landlords ??
-    users.filter((u: any) => u.role === "LANDLORD").length;
+    users.filter((u) => u.role === "LANDLORD").length;
   const tenantsCount =
-    metrics?.users?.tenants ??
-    users.filter((u: any) => u.role === "TENANT").length;
+    metrics?.users?.tenants ?? users.filter((u) => u.role === "TENANT").length;
 
   const totalProperties = metrics?.properties?.total ?? properties.length;
   const availableProperties =
     metrics?.properties?.available ??
-    properties.filter((p: any) => p.status === "AVAILABLE").length;
+    properties.filter((p) => p.status === "AVAILABLE").length;
   const rentedProperties =
     metrics?.properties?.rented ??
-    properties.filter((p: any) => p.status === "RENTED").length;
+    properties.filter((p) => p.status === "RENTED").length;
 
   const totalRequests = metrics?.rentals?.total ?? requests.length;
   const activeRentals =
     metrics?.rentals?.active ??
-    requests.filter((r: any) => r.status === "ACTIVE").length;
+    requests.filter((r) => r.status === "ACTIVE").length;
   const pendingApprovals =
     metrics?.rentals?.pending ??
-    requests.filter((r: any) => r.status === "PENDING").length;
+    requests.filter((r) => r.status === "PENDING").length;
 
   const estimatedRevenue =
     metrics?.finance?.totalRevenue ??
     requests
-      .filter((r: any) => r.status === "ACTIVE" || r.status === "COMPLETED")
-      .reduce((sum: number, r: any) => sum + Number(r.rentAmount || 0), 0);
+      .filter((r) => r.status === "ACTIVE" || r.status === "COMPLETED")
+      .reduce((sum: number, r) => sum + Number(r.rentAmount || 0), 0);
 
   return (
     <main className="mx-auto flex min-h-screen max-w-7xl flex-col gap-6">
@@ -237,7 +243,7 @@ export default async function AdminDashboardPage() {
               </p>
             ) : (
               <div className="divide-y divide-border/60">
-                {requests.slice(0, 4).map((req: any) => (
+                {requests.slice(0, 4).map((req: DashboardRentalRequest) => (
                   <div
                     key={req.id}
                     className="py-3 flex items-center justify-between text-xs"
@@ -253,7 +259,7 @@ export default async function AdminDashboardPage() {
                         </span>
                       </div>
                     </div>
-                    <StatusBadge status={req.status} />
+                    <StatusBadge status={req.status ?? "PENDING"} />
                   </div>
                 ))}
               </div>
@@ -280,7 +286,7 @@ export default async function AdminDashboardPage() {
               </p>
             ) : (
               <div className="grid gap-3 sm:grid-cols-2">
-                {properties.slice(0, 4).map((prop: any) => (
+                {properties.slice(0, 4).map((prop: DashboardProperty) => (
                   <div
                     key={prop.id}
                     className="p-3 border rounded-xl bg-card space-y-1.5 flex flex-col justify-between"
@@ -320,10 +326,10 @@ export default async function AdminDashboardPage() {
                 No categories configured.
               </p>
             ) : (
-              <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
-                {categories.map((cat: any) => {
+              <div className="space-y-2 max-h-55 overflow-y-auto pr-1">
+                {categories.map((cat: DashboardCategory) => {
                   const count = properties.filter(
-                    (p: any) => p.category?.name === cat.name,
+                    (p) => p.category?.name === cat.name,
                   ).length;
                   return (
                     <div
@@ -350,7 +356,7 @@ export default async function AdminDashboardPage() {
           </div>
 
           {/* Quick Actions Card */}
-          <div className="rounded-2xl border bg-gradient-to-br from-primary/10 to-primary/5 p-6 shadow-xs space-y-4 relative overflow-hidden">
+          <div className="rounded-2xl border bg-linear-to-br from-primary/10 to-primary/5 p-6 shadow-xs space-y-4 relative overflow-hidden">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
               <Shield className="size-4 text-primary" /> Admin Shortcuts
             </h3>

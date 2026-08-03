@@ -1,14 +1,5 @@
 import jwt from "jsonwebtoken";
 
-export type AuthenticatedUser = {
-  id?: string;
-  email?: string;
-  name?: string;
-  role?: string;
-  status?: string;
-  sub?: string;
-};
-
 export function getApiBaseUrl() {
   return process.env.API_BASE_URL || "http://localhost:5000";
 }

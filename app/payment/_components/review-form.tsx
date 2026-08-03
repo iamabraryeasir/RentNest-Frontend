@@ -1,9 +1,7 @@
 "use client";
 
-import {
-  submitReviewAction,
-  type ReviewState,
-} from "@/app/dashboard/tenant/_actions/reviews";
+import { submitReviewAction } from "@/app/dashboard/tenant/_actions/reviews";
+import type { ReviewState } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, MessageSquare, Star } from "lucide-react";

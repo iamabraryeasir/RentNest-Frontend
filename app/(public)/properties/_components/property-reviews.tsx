@@ -11,18 +11,7 @@ import { Edit2, Loader2, MessageSquare, Star, Trash2, User } from "lucide-react"
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-export interface ReviewItem {
-  id: string;
-  propertyId: string;
-  rating: number;
-  comment: string;
-  createdAt?: string;
-  tenant?: {
-    id?: string;
-    name?: string;
-    email?: string;
-  };
-}
+import type { Review as ReviewItem } from "@/types";
 
 interface PropertyReviewsProps {
   propertyId: string;

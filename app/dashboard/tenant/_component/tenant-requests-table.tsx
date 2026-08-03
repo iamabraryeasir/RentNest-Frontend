@@ -1,9 +1,10 @@
 import { ReviewTriggerButton } from "@/app/payment/_components/review-trigger-button";
 import { StatusBadge } from "@/components/status-badge";
+import type { DashboardRentalRequest } from "@/types";
 import Link from "next/link";
 
 interface TenantRequestsTableProps {
-  requests: any[];
+  requests: DashboardRentalRequest[];
 }
 
 export function TenantRequestsTable({ requests }: TenantRequestsTableProps) {
@@ -21,10 +22,12 @@ export function TenantRequestsTable({ requests }: TenantRequestsTableProps) {
             </tr>
           </thead>
           <tbody className="divide-y divide-border/60 text-sm">
-            {requests.slice(0, 5).map((req: any) => {
-              const status = req.status;
+            {requests.slice(0, 5).map((req) => {
+              const status = String(req.status ?? "PENDING");
+              const requestedMoveIn =
+                req.requestedMoveIn ?? new Date().toISOString();
               const dateFormatted = new Date(
-                req.requestedMoveIn,
+                requestedMoveIn,
               ).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "short",
@@ -47,7 +50,7 @@ export function TenantRequestsTable({ requests }: TenantRequestsTableProps) {
                   <td className="px-6 py-4 text-muted-foreground">
                     {dateFormatted}
                   </td>
-                  <td className="px-6 py-4 text-muted-foreground max-w-[200px] truncate">
+                  <td className="px-6 py-4 text-muted-foreground max-w-62.5 truncate">
                     {req.message}
                   </td>
                   <td className="px-6 py-4">
@@ -63,8 +66,8 @@ export function TenantRequestsTable({ requests }: TenantRequestsTableProps) {
                       </Link>
                     ) : status === "ACTIVE" ? (
                       <ReviewTriggerButton
-                        propertyId={req.propertyId}
-                        propertyTitle={req.property?.title || "Property"}
+                        propertyId={req.propertyId ?? ""}
+                        propertyTitle={req.property?.title ?? "Property"}
                       />
                     ) : (
                       <span className="text-xs text-muted-foreground font-medium">

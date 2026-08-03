@@ -1,5 +1,6 @@
 import { apiFetch } from "@/lib/api-client";
 import { getAuthenticatedUserData } from "@/lib/auth";
+import type { DashboardRentalRequest } from "@/types";
 import { CheckCircle2, Home } from "lucide-react";
 import { cookies } from "next/headers";
 import Link from "next/link";
@@ -55,9 +56,9 @@ export default async function PaymentSuccessPage({ searchParams }: Props) {
       });
       if (response.ok) {
         const payload = await response.json();
-        const requests = payload?.data || [];
+        const requests: DashboardRentalRequest[] = payload?.data || [];
         // Find the latest active booking
-        const latestActive = requests.find((r: any) => r.status === "ACTIVE");
+        const latestActive = requests.find((r) => r.status === "ACTIVE");
         if (latestActive) {
           finalPropertyId = latestActive.propertyId;
           propertyTitle =

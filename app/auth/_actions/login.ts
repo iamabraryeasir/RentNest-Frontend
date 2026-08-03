@@ -1,6 +1,7 @@
 "use server";
 
 import { getApiBaseUrl, getAuthenticatedUserData } from "@/lib/auth";
+import type { LoginState } from "@/types";
 import { cookies } from "next/headers";
 import { z } from "zod";
 
@@ -8,16 +9,6 @@ const loginSchema = z.object({
   email: z.string().trim().email("Please enter a valid email address."),
   password: z.string().min(1, "Password is required."),
 });
-
-export type LoginState = {
-  success: boolean;
-  message: string;
-  redirectTo?: string;
-  errors?: {
-    email?: string[];
-    password?: string[];
-  };
-};
 
 export async function loginAction(
   _prevState: LoginState | undefined,

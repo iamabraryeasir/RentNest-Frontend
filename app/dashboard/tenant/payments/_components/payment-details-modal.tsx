@@ -2,6 +2,7 @@
 
 import { fetchPaymentDetailsAction } from "@/app/dashboard/tenant/_actions/payments-extended";
 import { Button } from "@/components/ui/button";
+import type { DashboardPayment } from "@/types";
 import {
   Building,
   Calendar,
@@ -25,7 +26,7 @@ export function PaymentDetailsModal({
   onClose,
 }: PaymentDetailsModalProps) {
   const [loading, setLoading] = useState(true);
-  const [payment, setPayment] = useState<any>(null);
+  const [payment, setPayment] = useState<DashboardPayment | null>(null);
 
   useEffect(() => {
     async function loadDetails() {
@@ -101,7 +102,7 @@ export function PaymentDetailsModal({
                 <span className="text-muted-foreground flex items-center gap-1.5">
                   <FileText className="size-3.5" /> Transaction ID
                 </span>
-                <span className="font-mono font-bold text-foreground truncate max-w-[200px]">
+                <span className="font-mono font-bold text-foreground truncate max-w-50">
                   {payment.id}
                 </span>
               </div>
@@ -111,7 +112,7 @@ export function PaymentDetailsModal({
                   <span className="text-muted-foreground flex items-center gap-1.5">
                     <CreditCard className="size-3.5" /> Stripe Intent Ref
                   </span>
-                  <span className="font-mono text-muted-foreground truncate max-w-[200px]">
+                  <span className="font-mono text-muted-foreground truncate max-w-50">
                     {payment.stripePaymentIntentId}
                   </span>
                 </div>

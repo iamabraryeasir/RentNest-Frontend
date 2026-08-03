@@ -11,12 +11,7 @@ import {
 } from "../_actions/admin-actions";
 import { CategoryAddForm } from "./category-add-form";
 
-export interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  createdAt?: string;
-}
+import type { PropertyCategory as Category } from "@/types";
 
 interface CategoryManagerProps {
   categories: Category[];

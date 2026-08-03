@@ -1,6 +1,7 @@
 "use server";
 
 import { apiFetch } from "@/lib/api-client";
+import type { CreatePropertyState } from "@/types";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -32,24 +33,6 @@ const createPropertySchema = z.object({
   ),
   categoryId: z.string().min(1, "Please select a category."),
 });
-
-export type CreatePropertyState = {
-  success: boolean;
-  message: string;
-  errors?: {
-    title?: string[];
-    description?: string[];
-    address?: string[];
-    city?: string[];
-    area?: string[];
-    postalCode?: string[];
-    rentAmount?: string[];
-    bedrooms?: string[];
-    bathrooms?: string[];
-    propertySize?: string[];
-    categoryId?: string[];
-  };
-};
 
 export async function createPropertyAction(
   _prevState: CreatePropertyState | undefined,

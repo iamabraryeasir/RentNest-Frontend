@@ -1,7 +1,7 @@
-import { Property } from "@/components/property-card";
 import { StatCard } from "@/components/stat-card";
 import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-client";
+import type { DashboardRentalRequest, Property } from "@/types";
 import {
   Building,
   GitPullRequest,
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export default async function LandlordDashboardPage() {
   // Fetch properties and requests in parallel
   let properties: Property[] = [];
-  let requests = [];
+  let requests: DashboardRentalRequest[] = [];
 
   try {
     const [propResponse, reqResponse] = await Promise.all([
@@ -43,7 +43,7 @@ export default async function LandlordDashboardPage() {
   }
 
   const pendingRequestsCount = requests.filter(
-    (r: any) => r.status === "PENDING",
+    (r) => r.status === "PENDING",
   ).length;
   const portfolioRentAmount = properties.reduce(
     (sum, p) => sum + Number(p.rentAmount || 0),

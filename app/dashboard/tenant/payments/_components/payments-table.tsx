@@ -2,12 +2,13 @@
 
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
+import type { DashboardPayment } from "@/types";
 import { Calendar, CreditCard, Eye } from "lucide-react";
 import { useState } from "react";
 import { PaymentDetailsModal } from "./payment-details-modal";
 
 interface PaymentsTableProps {
-  payments: any[];
+  payments: DashboardPayment[];
 }
 
 export function PaymentsTable({ payments }: PaymentsTableProps) {
@@ -31,7 +32,7 @@ export function PaymentsTable({ payments }: PaymentsTableProps) {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/60 text-sm">
-              {payments.map((pm: any) => {
+              {payments.map((pm) => {
                 const formattedDate = pm.createdAt
                   ? new Date(pm.createdAt).toLocaleDateString("en-US", {
                       year: "numeric",
@@ -53,7 +54,7 @@ export function PaymentsTable({ payments }: PaymentsTableProps) {
                     <td className="px-6 py-4 font-mono text-xs font-semibold text-foreground">
                       <div className="flex items-center gap-1.5">
                         <CreditCard className="size-3.5 text-muted-foreground shrink-0" />
-                        <span className="truncate max-w-[120px]">{pm.id}</span>
+                        <span className="truncate max-w-30">{pm.id}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 font-bold text-foreground">

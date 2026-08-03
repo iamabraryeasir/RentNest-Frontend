@@ -1,4 +1,5 @@
 import { apiFetch } from "@/lib/api-client";
+import type { DashboardRentalRequest } from "@/types";
 import {
   ArrowLeft,
   Building,
@@ -7,7 +8,6 @@ import {
   MapPin,
   ShieldCheck,
 } from "lucide-react";
-import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { PayButton } from "./_components/pay-button";
@@ -19,7 +19,7 @@ type Props = {
 export default async function TenantPayPage({ params }: Props) {
   const { id } = await params;
 
-  let rental: any = null;
+  let rental: DashboardRentalRequest | null = null;
   try {
     const response = await apiFetch(`/api/rentals/${id}`, {
       cache: "no-store",
@@ -44,12 +44,20 @@ export default async function TenantPayPage({ params }: Props) {
     redirect("/dashboard/tenant/requests");
   }
 
-  const property = rental.property || {};
-  const formattedRent = Number(property.rentAmount || 0).toLocaleString();
-  const dateFormatted = new Date(rental.requestedMoveIn).toLocaleDateString(
-    "en-US",
-    { year: "numeric", month: "long", day: "numeric" },
-  );
+  const property = rental.property ?? {
+    title: "Rental Property",
+    address: "",
+    area: "",
+    city: "",
+    rentAmount: 0,
+  };
+  const formattedRent = Number(property.rentAmount ?? 0).toLocaleString();
+  const requestedMoveIn = rental.requestedMoveIn ?? new Date().toISOString();
+  const dateFormatted = new Date(requestedMoveIn).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   return (
     <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 p-6">

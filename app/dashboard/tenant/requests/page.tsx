@@ -2,6 +2,7 @@ import { ReviewTriggerButton } from "@/app/payment/_components/review-trigger-bu
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-client";
+import type { DashboardRentalRequest } from "@/types";
 import {
   ArrowLeft,
   Calendar,
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
 };
 
 export default async function TenantRequestsPage() {
-  let requests = [];
+  let requests: DashboardRentalRequest[] = [];
   try {
     const response = await apiFetch("/api/rentals/my-requests", {
       cache: "no-store",
@@ -89,15 +90,19 @@ export default async function TenantRequestsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/60 text-sm">
-                  {requests.map((req: any) => {
-                    const status = req.status;
-                    const dateFormatted = new Date(
-                      req.requestedMoveIn,
-                    ).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    });
+                  {requests.map((req) => {
+                    const status = String(req.status ?? "PENDING");
+                    const requestedMoveIn =
+                      req.requestedMoveIn ?? new Date().toISOString();
+                    const dateValue = new Date(requestedMoveIn);
+                    const dateFormatted = dateValue.toLocaleDateString(
+                      "en-US",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      },
+                    );
 
                     return (
                       <tr
@@ -135,7 +140,7 @@ export default async function TenantRequestsPage() {
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <p className="text-muted-foreground whitespace-pre-line max-w-[250px] line-clamp-3 leading-relaxed">
+                          <p className="text-muted-foreground whitespace-pre-line max-w-62.5 line-clamp-3 leading-relaxed">
                             {req.message || "—"}
                           </p>
                         </td>
@@ -156,9 +161,9 @@ export default async function TenantRequestsPage() {
                                 Paid Successfully
                               </span>
                               <ReviewTriggerButton
-                                propertyId={req.propertyId}
+                                propertyId={req.propertyId ?? ""}
                                 propertyTitle={
-                                  req.property?.title || "Property"
+                                  req.property?.title ?? "Property"
                                 }
                               />
                             </div>

@@ -22,14 +22,7 @@ import {
 import { UserDetailsModal } from "./user-details-modal";
 import { UserManagementFilters } from "./user-management-filters";
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: "ADMIN" | "LANDLORD" | "TENANT";
-  status: "ACTIVE" | "BLOCKED";
-  createdAt: string;
-}
+import type { User } from "@/types";
 
 interface UserManagementTableProps {
   users: User[];
@@ -189,13 +182,13 @@ export function UserManagementTable({
                     const isCurrent = user.id === currentUserId;
                     const isLoading = loadingId === user.id;
 
-                    const joinedDate = new Date(
-                      user.createdAt,
-                    ).toLocaleDateString(undefined, {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    });
+                    const joinedDate = user.createdAt
+                      ? new Date(user.createdAt).toLocaleDateString(undefined, {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })
+                      : "N/A";
 
                     return (
                       <tr

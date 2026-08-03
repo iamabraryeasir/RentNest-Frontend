@@ -1,6 +1,7 @@
 "use server";
 
 import { apiFetch } from "@/lib/api-client";
+import type { ProfileState } from "@/types";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -16,15 +17,6 @@ const updateProfileSchema = z.object({
     .email("Please enter a valid email address.")
     .optional(),
 });
-
-export type ProfileState = {
-  success: boolean;
-  message: string;
-  errors?: {
-    name?: string[];
-    email?: string[];
-  };
-};
 
 export async function updateProfileAction(
   _prevState: ProfileState | undefined,

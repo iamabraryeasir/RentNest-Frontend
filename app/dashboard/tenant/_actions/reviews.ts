@@ -1,6 +1,7 @@
 "use server";
 
 import { apiFetch } from "@/lib/api-client";
+import type { ReviewState } from "@/types";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -19,16 +20,6 @@ const reviewSchema = z.object({
     .trim()
     .min(5, "Review comment must be at least 5 characters."),
 });
-
-export type ReviewState = {
-  success: boolean;
-  message: string;
-  errors?: {
-    propertyId?: string[];
-    rating?: string[];
-    comment?: string[];
-  };
-};
 
 export async function submitReviewAction(
   _prevState: ReviewState | undefined,

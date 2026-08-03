@@ -4,6 +4,7 @@ import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { UserDropdown } from "@/components/user-dropdown";
 import { cn } from "@/lib/utils";
+import type { AuthenticatedUser } from "@/types";
 import { ChevronRight, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -12,11 +13,7 @@ import { roleSidebarItems } from "../_config/role-sidebar-items";
 
 interface DashboardShellProps {
   children: React.ReactNode;
-  user: {
-    id?: string;
-    email?: string;
-    role?: string;
-  };
+  user: AuthenticatedUser;
   role: string;
 }
 

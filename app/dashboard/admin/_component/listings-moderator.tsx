@@ -9,26 +9,7 @@ import { useState, useTransition } from "react";
 import toast from "react-hot-toast";
 import { deletePropertyAction } from "../_actions/admin-actions";
 
-export interface Property {
-  id: string;
-  title: string;
-  description: string;
-  address: string;
-  city: string;
-  rentAmount: number | string;
-  status: "AVAILABLE" | "RENTED" | "UNAVAILABLE";
-  bedrooms: number;
-  bathrooms: number;
-  propertySize: number;
-  createdAt?: string;
-  landlord?: {
-    name: string;
-    email: string;
-  };
-  category?: {
-    name: string;
-  };
-}
+import type { DashboardProperty as Property } from "@/types";
 
 interface ListingsModeratorProps {
   properties: Property[];
@@ -61,7 +42,7 @@ export function ListingsModerator({ properties }: ListingsModeratorProps) {
     const search = searchTerm.toLowerCase();
     return (
       prop.title.toLowerCase().includes(search) ||
-      prop.city.toLowerCase().includes(search) ||
+      (prop.city?.toLowerCase().includes(search) ?? false) ||
       (prop.landlord?.name &&
         prop.landlord.name.toLowerCase().includes(search)) ||
       (prop.landlord?.email &&
@@ -122,7 +103,7 @@ export function ListingsModerator({ properties }: ListingsModeratorProps) {
               </thead>
               <tbody className="divide-y divide-border/60 text-sm">
                 {filteredProperties.map((prop) => {
-                  const status = prop.status;
+                  const status = prop.status || "PENDING";
                   const formattedRent = Number(
                     prop.rentAmount,
                   ).toLocaleString();
@@ -152,9 +133,9 @@ export function ListingsModerator({ properties }: ListingsModeratorProps) {
                       </td>
                       <td className="px-6 py-4 text-xs text-muted-foreground">
                         <div>
-                          {prop.bedrooms} Bed • {prop.bathrooms} Bath
+                          {prop.bedrooms ?? 0} Bed • {prop.bathrooms ?? 0} Bath
                         </div>
-                        <div className="mt-0.5">{prop.propertySize} sqft</div>
+                        <div className="mt-0.5">{prop.propertySize ?? 0} sqft</div>
                       </td>
                       <td className="px-6 py-4 font-bold text-foreground">
                         ${formattedRent}

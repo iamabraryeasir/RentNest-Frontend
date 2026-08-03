@@ -1,37 +1,7 @@
 import { cn } from "@/lib/utils";
+import type { Property } from "@/types";
 import { Bath, Bed, MapPin, Maximize2, Tag } from "lucide-react";
 import Link from "next/link";
-
-export interface Property {
-  id: string;
-  title: string;
-  description: string;
-  address: string;
-  city: string;
-  area: string;
-  postalCode: string;
-  images: string[];
-  rentAmount: string;
-  bedrooms: number;
-  bathrooms: number;
-  propertySize: number;
-  amenities: string[];
-  status: string;
-  landlordId: string;
-  categoryId: string;
-  createdAt: string;
-  updatedAt: string;
-  category?: {
-    id: string;
-    name: string;
-    slug: string;
-  };
-  landlord?: {
-    id: string;
-    name: string;
-    email: string;
-  };
-}
 
 interface PropertyCardProps {
   property: Property;
@@ -62,7 +32,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/40 flex flex-col items-center justify-center p-4 text-muted-foreground transition-transform duration-500 group-hover:scale-105">
+            <div className="absolute inset-0 bg-linear-to-br from-primary/10 to-accent/40 flex flex-col items-center justify-center p-4 text-muted-foreground transition-transform duration-500 group-hover:scale-105">
               <div className="rounded-full bg-background/80 p-3 shadow-xs">
                 <Home className="size-8 text-primary/80 animate-pulse" />
               </div>

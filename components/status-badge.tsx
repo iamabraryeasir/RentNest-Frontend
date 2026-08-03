@@ -1,15 +1,4 @@
-export type StatusType =
-  | "ACTIVE"
-  | "APPROVED"
-  | "PENDING"
-  | "REJECTED"
-  | "COMPLETED"
-  | "AVAILABLE"
-  | "RENTED"
-  | "UNAVAILABLE"
-  | "BLOCKED"
-  | "PAID"
-  | "FAILED";
+import type { DashboardStatus as StatusType } from "@/types";
 
 interface StatusBadgeProps {
   status: StatusType | string;

@@ -1,6 +1,7 @@
 "use server";
 
 import { apiFetch } from "@/lib/api-client";
+import type { RentalRequestState } from "@/types";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -9,16 +10,6 @@ const rentalRequestSchema = z.object({
   requestedMoveIn: z.string().min(1, "Requested move-in date is required."),
   message: z.string().min(1, "Message is required."),
 });
-
-export type RentalRequestState = {
-  success: boolean;
-  message: string;
-  errors?: {
-    propertyId?: string[];
-    requestedMoveIn?: string[];
-    message?: string[];
-  };
-};
 
 export async function submitRentalRequestAction(
   _prevState: RentalRequestState | undefined,
